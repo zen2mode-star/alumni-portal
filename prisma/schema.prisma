@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      String   @default("STUDENT") // STUDENT, ALUMNI, ADMIN
+  status    String   @default("PENDING") // PENDING, APPROVED
+  name      String
+  
+  branch       String?
+  startYear    Int?
+  gradYear     Int?
+  company      String?
+  jobRole      String?
+  bio          String?
+  skills       String? 
+  imageUrl     String? // Will store local paths like /uploads/xyz.png
+  linkedinUrl  String?
+
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  authoredJobs     Job[]
+  authoredEvents   Event[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  content    String
+  senderId   String
+  receiverId String
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  sender   User @relation("SentMessages", fields: [senderId], references: [id])
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id])
+}
+
+model Job {
+  id          String   @id @default(cuid())
+  title       String
+  company     String
+  description String
+  link        String?
+  authorId    String
+  createdAt   DateTime @default(now())
+
+  author User @relation(fields: [authorId], references: [id])
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  date        DateTime
+  description String
+  authorId    String
+  createdAt   DateTime @default(now())
+
+  author User @relation(fields: [authorId], references: [id])
+}
+
+model VerifiedEmail {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  startYear Int
+  gradYear  Int
+  createdAt DateTime @default(now())
+}

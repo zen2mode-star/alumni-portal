@@ -1,0 +1,152 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  margin-bottom: 1.5rem;
+}
+
+.chatContainer {
+  display: flex;
+  flex-grow: 1;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.sidebar {
+  width: 300px;
+  border-right: 1px solid var(--card-border);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h3 {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--card-border);
+  font-size: 1.2rem;
+}
+
+.contactList {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.contactCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--card-border);
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.contactCard:hover {
+  background: var(--background-start);
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.chatArea {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--background-start);
+}
+
+.emptyState {
+  margin: auto;
+  color: var(--text-secondary);
+}
+
+.chatBox {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.messagesList {
+  flex-grow: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.messageBubble {
+  max-width: 60%;
+  padding: 0.8rem 1.2rem;
+  border-radius: 1rem;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.myMessage {
+  align-self: flex-end;
+  background: var(--primary-color);
+  color: white;
+  border-bottom-right-radius: 0.2rem;
+}
+
+.theirMessage {
+  align-self: flex-start;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-bottom-left-radius: 0.2rem;
+}
+
+.noMessages {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-top: 2rem;
+}
+
+.messageForm {
+  padding: 1.5rem;
+  background: var(--card-bg);
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  gap: 1rem;
+}
+
+.messageInput {
+  flex-grow: 1;
+  padding: 1rem;
+  border-radius: 20px;
+  border: 1px solid var(--card-border);
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.messageInput:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.sendButton {
+  padding: 0.8rem 2rem;
+  border-radius: 20px;
+  background: var(--primary-color);
+  color: white;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.sendButton:hover {
+  background: var(--primary-hover);
+}

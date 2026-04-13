@@ -1,0 +1,177 @@
+.container {
+  padding: 4rem;
+  background-color: var(--bg-color);
+  min-height: 100vh;
+}
+
+.dashboardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 4rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.headerTitle h1 {
+  font-size: 2.5rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.03em;
+}
+
+.headerTitle p {
+  color: var(--accent-color);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+}
+
+.statsRow {
+  display: flex;
+  gap: 2rem;
+}
+
+.statCard {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  padding: 1.5rem 3rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow-premium);
+  text-align: center;
+}
+
+.statVal {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: block;
+}
+
+.statLabel {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+
+/* Content Layout */
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: flex-start;
+}
+
+@media (max-width: 1400px) {
+  .contentGrid { grid-template-columns: 1fr; }
+}
+
+.section h2 {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 0.1em;
+  margin-bottom: 2rem;
+  font-weight: 800;
+}
+
+/* Premium Table */
+.tableWrapper {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--card-border);
+  overflow: hidden;
+  box-shadow: var(--shadow-premium);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  background: var(--card-border);
+  padding: 1.25rem;
+  text-align: left;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: 800;
+}
+
+.table td {
+  padding: 1.5rem 1.25rem;
+  border-bottom: 1px solid var(--card-border);
+  font-size: 0.9rem;
+}
+
+.userName { font-weight: 700; color: var(--text-primary); font-size: 1rem; }
+.userBatch { font-size: 0.75rem; color: var(--accent-color); font-weight: 600; margin-top: 0.25rem; }
+
+.badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  background: var(--card-border);
+  font-weight: 800;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.statusPending { color: #f59e0b; font-weight: 800; }
+.statusApproved { color: #10b981; font-weight: 800; }
+
+/* Dashboard Buttons */
+.btnRow { display: flex; gap: 0.75rem; }
+
+.approveBtn { background: #10b981; color: white; border-radius: 8px; font-weight: 700; font-size: 0.75rem; padding: 0.5rem 1rem; border: none; cursor: pointer; }
+.resetBtn { background: var(--primary-color); color: white; border-radius: 8px; font-weight: 700; font-size: 0.75rem; padding: 0.5rem 1rem; border: none; cursor: pointer; }
+.rejectBtn { background: rgba(220, 38, 38, 0.1); color: #dc2626; border-radius: 8px; font-weight: 700; font-size: 0.75rem; padding: 0.5rem 1rem; border: 1px solid rgba(220, 38, 38, 0.2); cursor: pointer; }
+
+.rejectBtn:hover {
+  background: #dc2626;
+  color: white;
+}
+
+/* Uploader & Add Form */
+.uploaderBox {
+  background: var(--card-bg);
+  padding: 3rem;
+  border-radius: var(--radius);
+  border: 2px dashed var(--card-border);
+  text-align: center;
+  transition: border-color 0.3s;
+}
+
+.uploaderBox:hover { border-color: var(--accent-color); }
+
+.fileLabel { font-size: 0.85rem; color: var(--text-secondary); font-weight: 600; margin-bottom: 1.5rem; display: block; }
+.uploadBtn { background: var(--primary-color); color: white; width: 100%; padding: 1rem; border-radius: 12px; font-weight: 700; }
+
+.addForm {
+  background: var(--card-bg);
+  padding: 2.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--accent-color);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  box-shadow: 0 10px 30px var(--accent-glow);
+}
+
+.addForm input {
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  background: var(--bg-color);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.addForm button { grid-column: 1 / -1; background: var(--accent-color); color: white; padding: 1rem; border-radius: 12px; font-weight: 800; font-size: 0.9rem; border: none; cursor: pointer; }

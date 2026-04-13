@@ -1,0 +1,66 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  padding: 2rem;
+}
+
+.bubble {
+  max-width: 500px;
+  background: var(--card-bg);
+  padding: 3rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.bubble h1 {
+  font-size: 1.75rem;
+  color: var(--primary-color);
+}
+
+.bubble p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.hint {
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.signOutBtn {
+  background: transparent;
+  border: 1px solid #dc2626;
+  color: #dc2626;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.homeBtn {
+  background: var(--primary-color);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 700;
+  text-decoration: none;
+}

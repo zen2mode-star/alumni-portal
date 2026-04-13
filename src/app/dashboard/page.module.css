@@ -1,0 +1,264 @@
+.premiumContainer {
+  padding: 4rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.executiveLoader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(6, 9, 20, 0.95);
+  backdrop-filter: blur(20px);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.loaderText {
+  color: var(--accent-color);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.75rem;
+  margin-top: 2rem;
+}
+
+/* Identity Header */
+.identityHeader {
+  position: relative;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 4rem;
+  display: flex;
+  gap: 4rem;
+  align-items: center;
+  overflow: hidden;
+  margin-bottom: 4rem;
+  box-shadow: var(--shadow-premium);
+}
+
+.auraBg {
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 50%;
+  height: 200%;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
+  z-index: 0;
+}
+
+.identityVisual {
+  position: relative;
+  z-index: 1;
+}
+
+.avatar {
+  width: 180px;
+  height: 180px;
+  border-radius: 30px;
+  object-fit: cover;
+  border: 4px solid var(--card-bg);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.batchBadge {
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent-color);
+  color: white;
+  padding: 0.4rem 1.2rem;
+  border-radius: 50px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.identityInfo {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+}
+
+.identityInfo h1 {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.roleTag {
+  font-size: 0.75rem;
+  padding: 0.3rem 0.8rem;
+  background: var(--primary-color);
+  color: white;
+  border-radius: 6px;
+  letter-spacing: 0.05em;
+}
+
+.currentPosition {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 2rem;
+}
+
+.contactBar {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.badgeLink {
+  color: var(--accent-color);
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--accent-color);
+}
+
+.statusLabel {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+/* Dashboard Grid */
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 4rem;
+}
+
+.glassCard {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  padding: 3rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow-premium);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+.cardHeader h3 {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+}
+
+.cardHeader span {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--accent-color);
+  letter-spacing: 0.1em;
+}
+
+.modernForm {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.inputGroup { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.inputGroup label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+
+.inputGroup input, .inputGroup textarea {
+  background: rgba(0,0,0,0.03);
+  border: 1px solid var(--card-border);
+  padding: 1rem;
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+[data-theme='dark'] .inputGroup input { background: rgba(255,255,255,0.02); }
+
+.fileCustom {
+  position: relative;
+}
+
+.fileCustom input { opacity: 0; position: absolute; }
+
+.fileCustom label {
+  display: block;
+  background: var(--accent-glow);
+  color: var(--accent-color);
+  padding: 1rem;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Sidebar Tiles */
+.controlPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.actionGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.actionTile, .logoutTile {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  padding: 2rem;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  text-decoration: none;
+  transition: all 0.3s;
+  cursor: pointer;
+  width: 100%;
+}
+
+.actionTile:hover { transform: scale(1.02); border-color: var(--accent-color); }
+.logoutTile:hover { background: rgba(220, 38, 38, 0.05); border-color: #dc2626; }
+
+.tileIcon { font-size: 1.5rem; }
+.tileText { font-weight: 700; color: var(--text-primary); }
+
+.tileBadge {
+  margin-left: auto;
+  background: #dc2626;
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+}

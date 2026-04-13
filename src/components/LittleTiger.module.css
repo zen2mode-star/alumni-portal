@@ -1,0 +1,60 @@
+.tigerContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tigerSvg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.1));
+}
+
+.animating {
+  animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+}
+
+.headOutline {
+  transition: all 0.3s;
+}
+
+.animating .headOutline {
+  filter: brightness(1.1);
+}
+
+.eye {
+  transition: opacity 0.3s;
+}
+
+.animating .eye {
+  animation: blink 4s infinite;
+}
+
+@keyframes blink {
+  0%, 90%, 100% { opacity: 1; }
+  95% { opacity: 0; }
+}
+
+.executivePulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120%;
+  height: 120%;
+  border: 1px solid var(--accent-color);
+  border-radius: 50%;
+  animation: pulseOut 2s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
+  opacity: 0;
+}
+
+@keyframes pulseOut {
+  0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(1.4); opacity: 0; }
+}

@@ -1,0 +1,162 @@
+.main {
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8rem 4rem;
+  background-image: 
+    radial-gradient(at 100% 0%, rgba(212, 175, 55, 0.05) 0, transparent 40%),
+    radial-gradient(at 0% 100%, rgba(212, 175, 55, 0.03) 0, transparent 40%);
+  gap: 4rem;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.heroText {
+  max-width: 700px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: var(--card-border);
+  border-radius: 50px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--accent-color);
+  margin-bottom: 2rem;
+}
+
+.hero h1 {
+  font-size: 4rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.goldText {
+  color: var(--accent-color);
+  background: linear-gradient(135deg, #B69131 0%, #D4AF37 50%, #B69131 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.heroDesc {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 3rem;
+  font-weight: 500;
+}
+
+.ctaRow {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.heroMascot {
+  flex-shrink: 0;
+  position: relative;
+}
+
+.mascotAura {
+  position: relative;
+  z-index: 1;
+}
+
+.mascotAura::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140%;
+  height: 140%;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  z-index: -1;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  padding: 5rem 4rem;
+}
+
+.featCard {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  padding: 3rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow-premium);
+  transition: all 0.3s ease;
+}
+
+.featCard:hover {
+  transform: translateY(-10px);
+  border-color: var(--accent-color);
+}
+
+.featIcon {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.featCard h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--accent-color);
+}
+
+.featCard p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.statsStrip {
+  display: flex;
+  justify-content: space-around;
+  padding: 4rem;
+  background: var(--primary-color);
+  color: white;
+}
+
+/* Fix for dark mode text contrast on stats strip */
+[data-theme='dark'] .statsStrip {
+  background: var(--card-bg);
+  border-top: 1px solid var(--card-border);
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.statNum {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--accent-color);
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  opacity: 0.8;
+}
+
+@media (max-width: 1200px) {
+  .hero { padding: 6rem 2rem; flex-direction: column; text-align: center; }
+  .ctaRow { justify-content: center; }
+  .features { grid-template-columns: 1fr; }
+}
