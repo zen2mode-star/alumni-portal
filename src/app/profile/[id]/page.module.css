@@ -1,148 +1,124 @@
 .container {
-  max-width: 800px;
+  padding-bottom: 3rem;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 3rem 2rem;
-  width: 100%;
 }
 
-.backLink {
-  margin-bottom: 2rem;
-}
-
-.backLink a {
-  color: var(--text-secondary);
-  font-weight: 500;
-  transition: color 0.2s;
-}
-
-.backLink a:hover {
-  color: var(--primary-color);
-}
-
-.profileCard {
-  background: var(--card-bg);
+.identityHeader {
+  position: relative;
+  background: linear-gradient(135deg, #111115 0%, #1a1a2e 100%);
   border: 1px solid var(--card-border);
-  border-radius: var(--radius);
+  color: white;
   padding: 3rem;
-  box-shadow: var(--shadow-lg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  overflow: hidden;
+  border-radius: 0 0 12px 12px;
 }
 
-.header {
+[data-theme='light'] .identityHeader {
+  background: linear-gradient(135deg, var(--primary-color) 0%, #4f46e5 100%);
+}
+
+.auraBg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 80% 20%, var(--accent-glow) 0%, transparent 60%);
+  opacity: 0.3;
+}
+
+.headerContent {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
-  gap: 2rem;
-  margin-bottom: 3rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid var(--card-border);
+  gap: 2.5rem;
 }
 
 .avatar {
   width: 120px;
   height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid var(--primary-color);
-}
-
-.name {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
-}
-
-.headline {
-  font-size: 1.25rem;
-  color: var(--text-primary);
-  font-weight: 500;
-  margin-bottom: 0.25rem;
-}
-
-.gradInfo {
-  color: var(--text-secondary);
-  font-size: 1rem;
-}
-
-.section {
-  margin-bottom: 2.5rem;
-}
-
-.section h2 {
-  font-size: 1.5rem;
-  color: var(--text-primary);
-  margin-bottom: 1rem;
-}
-
-.bio {
-  color: var(--text-secondary);
-  line-height: 1.6;
-  font-size: 1.1rem;
-}
-
-.skills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-}
-
-.skillTag {
-  background: rgba(79, 70, 229, 0.1);
-  color: var(--primary-color);
-  padding: 0.5rem 1rem;
   border-radius: 20px;
-  font-size: 0.95rem;
-  font-weight: 500;
+  object-fit: cover;
+  border: 3px solid rgba(123, 97, 255, 0.4);
 }
 
-.actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 3rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--card-border);
+.headerInfo { flex: 1; }
+.badgeRow { display: flex; gap: 0.75rem; margin-bottom: 1rem; }
+.roleBadge { background: var(--primary-color); color: white; padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.7rem; font-weight: 700; }
+.institutionalBadge { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: white; padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.7rem; font-weight: 700; }
+
+.name { font-size: 2.5rem; margin-bottom: 0.3rem; letter-spacing: -0.03em; line-height: 1; font-weight: 800; }
+.headline { font-size: 1.1rem; color: var(--primary-color); font-weight: 700; margin-bottom: 1rem; }
+[data-theme='light'] .headline { color: rgba(255,255,255,0.7); }
+
+.metaRow { display: flex; gap: 1.5rem; font-size: 0.85rem; color: rgba(255,255,255,0.6); font-weight: 500; }
+
+.headerActions { z-index: 1; }
+
+.profileGrid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 2rem;
+  padding: 2rem;
 }
 
-.primaryButton, .secondaryButton {
-  flex: 1;
-  padding: 1rem;
-  border-radius: var(--radius);
+.card {
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  margin-bottom: 1.5rem;
+}
+
+.card h3 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primary-color);
+  margin-bottom: 1.25rem;
+  border-left: 3px solid var(--primary-color);
+  padding-left: 0.75rem;
+  font-weight: 700;
+}
+
+.bio { font-size: 0.95rem; line-height: 1.7; color: var(--text-secondary); white-space: pre-wrap; }
+
+.skillGrid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.skillTag {
+  background: var(--bg-elevated);
+  border: 1px solid var(--card-border);
+  padding: 0.4rem 0.8rem;
+  border-radius: 50px;
+  font-size: 0.8rem;
   font-weight: 600;
-  font-size: 1.1rem;
-  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.milestone { margin-bottom: 1.25rem; }
+.milestone strong { display: block; font-size: 0.7rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.3rem; font-weight: 600; }
+.milestone p { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
+
+.rootItem { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 1.25rem; }
+.rootItem label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); }
+.rootItem span { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+
+.socialLinks { display: flex; flex-direction: column; gap: 0.75rem; }
+.socialLink {
+  padding: 0.75rem 1rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-primary);
   transition: all 0.2s;
 }
 
-.primaryButton {
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-}
+.socialLink:hover { background: var(--primary-color); color: white; border-color: var(--primary-color); }
 
-.primaryButton:hover {
-  background-color: var(--primary-hover);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
-}
-
-.secondaryButton {
-  background-color: transparent;
-  color: var(--text-primary);
-  border: 1px solid var(--text-secondary);
-}
-
-.secondaryButton:hover {
-  background-color: var(--background-start);
-  transform: translateY(-2px);
-}
-
-@media (max-width: 600px) {
-  .header {
-    flex-direction: column;
-    text-align: center;
-  }
-  .actions {
-    flex-direction: column;
-  }
+@media (max-width: 1024px) {
+  .profileGrid { grid-template-columns: 1fr; padding: 1.5rem; }
+  .headerContent { flex-direction: column; text-align: center; }
+  .name { font-size: 2rem; }
+  .metaRow { flex-direction: column; gap: 0.4rem; }
 }

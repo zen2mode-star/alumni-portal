@@ -43,7 +43,7 @@ export default function CSVUploader() {
               className={styles.fileInput} 
             />
             <label htmlFor="csv-file" className={styles.fileLabel}>
-              📂 Click to select CSV (Name,Email,StartYear,GradYear)
+              📂 Click to select CSV (Name,Email,StartYear,GradYear,AuthCode)
             </label>
           </div>
           <button type="submit" className={styles.uploadBtn}>Upload & Whitelist Members</button>

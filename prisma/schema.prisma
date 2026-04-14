@@ -3,9 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -16,35 +15,66 @@ model User {
   status    String   @default("PENDING") // PENDING, APPROVED
   name      String
   
-  branch       String?
-  startYear    Int?
-  gradYear     Int?
+  // Basic Identity
+  bio          String?
+  imageUrl     String? 
+  location     String?
+  phone        String?
+  website      String?
+
+  // Institutional Roots (KEC Dwarahat Specific)
+  branch         String?
+  startYear      Int?
+  gradYear       Int?
+  rollNumber     String?
+  hostel         String?
+  higherStudies  String? 
+
+  // Professional Presence
   company      String?
   jobRole      String?
-  bio          String?
   skills       String? 
-  imageUrl     String? // Will store local paths like /uploads/xyz.png
+  achievements String? 
+
+  // Digital Connectivity
   linkedinUrl  String?
+  githubUrl    String?
+  twitterUrl   String?
+  instagramUrl String?
 
   sentMessages     Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
   authoredJobs     Job[]
   authoredEvents   Event[]
+  jobInterests     JobInterest[]
+  posts            Post[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+model Post {
+  id        String   @id @default(cuid())
+  content   String
+  imageUrl  String?
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  roleSnap  String   // Captures the user role at time of posting (STUDENT/ALUMNI)
+  createdAt DateTime @default(now())
+}
+
 model Message {
   id         String   @id @default(cuid())
   content    String
+  imageUrl   String?
   senderId   String
   receiverId String
   read       Boolean  @default(false)
+  deletedFor String   @default("") // comma-separated userIds who deleted for themselves
   createdAt  DateTime @default(now())
 
-  sender   User @relation("SentMessages", fields: [senderId], references: [id])
-  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  sender   User @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
 }
 
 model Job {
@@ -54,9 +84,23 @@ model Job {
   description String
   link        String?
   authorId    String
+  status      String   @default("PENDING") // PENDING, APPROVED
   createdAt   DateTime @default(now())
 
-  author User @relation(fields: [authorId], references: [id])
+  author    User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  interests JobInterest[]
+}
+
+model JobInterest {
+  id        String   @id @default(cuid())
+  userId    String
+  jobId     String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, jobId])
 }
 
 model Event {
@@ -67,14 +111,15 @@ model Event {
   authorId    String
   createdAt   DateTime @default(now())
 
-  author User @relation(fields: [authorId], references: [id])
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 }
 
 model VerifiedEmail {
   id        String   @id @default(cuid())
   email     String   @unique
-  name      String
-  startYear Int
-  gradYear  Int
+  name      String?
+  authCode  String?  @unique
+  startYear Int?
+  gradYear  Int?
   createdAt DateTime @default(now())
 }

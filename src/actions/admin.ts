@@ -77,7 +77,7 @@ export async function uploadVerifiedEmails(formData: FormData) {
     if (!file) return { error: 'No file uploaded' };
 
     const text = await file.text();
-    // Expecting: Name,Email,StartYear,GradYear
+    // Expecting: Name,Email,StartYear,GradYear,AuthCode
     const records = parse(text, {
       columns: true,
       skip_empty_lines: true,
@@ -89,14 +89,16 @@ export async function uploadVerifiedEmails(formData: FormData) {
         where: { email: record.Email },
         update: {
           name: record.Name,
-          startYear: parseInt(record.StartYear),
-          gradYear: parseInt(record.GradYear)
+          authCode: record.AuthCode || null,
+          startYear: parseInt(record.StartYear) || null,
+          gradYear: parseInt(record.GradYear) || null
         },
         create: {
           email: record.Email,
           name: record.Name,
-          startYear: parseInt(record.StartYear),
-          gradYear: parseInt(record.GradYear)
+          authCode: record.AuthCode || null,
+          startYear: parseInt(record.StartYear) || null,
+          gradYear: parseInt(record.GradYear) || null
         }
       });
     }
@@ -105,6 +107,6 @@ export async function uploadVerifiedEmails(formData: FormData) {
     return { success: true, count: records.length };
   } catch (error) {
     console.error('CSV error:', error);
-    return { error: 'Failed to process CSV file. Ensure columns are: Name,Email,StartYear,GradYear' };
+    return { error: 'Failed to process CSV file. Ensure columns are: Name,Email,StartYear,GradYear,AuthCode' };
   }
 }

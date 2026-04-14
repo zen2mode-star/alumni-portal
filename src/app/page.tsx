@@ -1,69 +1,159 @@
 export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { PrismaClient } from '@prisma/client';
-import LittleTiger from '@/components/LittleTiger';
+import { verifySession } from '@/lib/session';
+import { 
+  Users, 
+  GraduationCap, 
+  Briefcase, 
+  Plus, 
+  Award,
+  BookOpen
+} from 'lucide-react';
+import SyncButton from '@/components/SyncButton';
 import styles from './page.module.css';
 
 const prisma = new PrismaClient();
 
 export default async function Home() {
-  const alumniCount = await prisma.user.count({ where: { role: 'ALUMNI', status: 'APPROVED' } });
+  const session = await verifySession();
+  
+  const [alumniCount, studentCount, recentAlumni, recentStudents, recentJobs, user] = await Promise.all([
+    prisma.verifiedEmail.count(),
+    prisma.user.count({ where: { role: 'STUDENT', status: 'APPROVED' } }),
+    prisma.user.findMany({
+      where: { role: 'ALUMNI', status: 'APPROVED' },
+      orderBy: { createdAt: 'desc' },
+      take: 5
+    }),
+    prisma.user.findMany({
+      where: { role: 'STUDENT', status: 'APPROVED' },
+      orderBy: { createdAt: 'desc' },
+      take: 5
+    }),
+    prisma.job.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 5,
+      include: { author: true }
+    }),
+    session?.userId ? prisma.user.findUnique({
+      where: { id: session.userId },
+      select: { name: true, imageUrl: true, jobRole: true, company: true, branch: true }
+    }) : Promise.resolve(null)
+  ]);
 
   return (
-    <main className={styles.main}>
-      <section className={styles.hero}>
-        <div className={styles.heroText}>
-          <div className={styles.badge}>Institutional Pride • Alumni Network</div>
-          <h1 className="animate-pop">Generations of Excellence <span className={styles.goldText}>United.</span></h1>
-          <p className={styles.heroDesc}>
-            Step into the official professional ecosystem of KecAlumini.in. 
-            Forge strategic connections, access elite career pathways, 
-            and elevate our shared heritage.
-          </p>
-          <div className={styles.ctaRow}>
-            <Link href="/directory" className="btn btn-primary">Enter Directory</Link>
-            <Link href="/register" className="btn btn-glass">Join the Legacy ➔</Link>
+    <div className="institutional-container">
+      <div className={styles.standardGrid}>
+        
+        {/* Left Column: Profile Card */}
+        <aside className={styles.leftCol}>
+          <div className={styles.identityCard}>
+            <div className={styles.coverBg}></div>
+            <div className={styles.idContent}>
+              <img 
+                src={user?.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'K')}&background=7B61FF&color=fff`} 
+                className={styles.idAvatar} 
+              />
+              <h3>{user?.name || 'Institutional Guest'}</h3>
+              <p>{user?.jobRole || 'Future Leader'} {user?.company ? `@ ${user.company}` : ''}</p>
+              <div className={styles.idStats}>
+                 <div className={styles.idStatRow}>
+                   <span>Network Strength</span>
+                   <span className={styles.statVal}>{alumniCount + studentCount}</span>
+                 </div>
+                 <div className={styles.idStatRow}>
+                   <span>Verified Alumni</span>
+                   <span className={styles.statVal}>{alumniCount}</span>
+                 </div>
+              </div>
+              <Link href="/dashboard" className={styles.idAction}>View My Dossier</Link>
+            </div>
           </div>
-        </div>
-        <div className={styles.heroMascot}>
-          <div className={styles.mascotAura}>
-            <LittleTiger size={220} />
+
+          <div className={styles.quickLinks}>
+             <p>Institutional Resources</p>
+             <Link href="/directory"><Users size={16} /> Alumni Network</Link>
+             <Link href="/students"><GraduationCap size={16} /> Student Talent</Link>
+             <Link href="/jobs"><Briefcase size={16} /> Job Postings</Link>
           </div>
-        </div>
-      </section>
+        </aside>
 
-      <section className={styles.features}>
-        <div className={styles.featCard}>
-          <div className={styles.featIcon}>🏛️</div>
-          <h3>The Vault</h3>
-          <p>Strict institutional verification ensures you only engage with certified members of our global network.</p>
-        </div>
-        <div className={styles.featCard}>
-          <div className={styles.featIcon}>⚔️</div>
-          <h3>Career Arsenal</h3>
-          <p>Exclusive executive-level job boards and direct mentorship lanes from Microsoft to McKinsey.</p>
-        </div>
-        <div className={styles.featCard}>
-          <div className={styles.featIcon}>🎗️</div>
-          <h3>Heritage Access</h3>
-          <p>Unlock private networking events and university forums designed for lifelong strategic growth.</p>
-        </div>
-      </section>
+        {/* Center Column: Institutional Pulse Feed */}
+        <main className={styles.centerCol}>
+          <section className={styles.pulseHeader}>
+            <div className={styles.pulseInfo}>
+              <h2>Institutional Executive Pulse</h2>
+              <p>Real-time evolution of the BTKIT (KEC) ecosystem</p>
+            </div>
+          </section>
 
-      <div className={styles.statsStrip}>
-        <div className={styles.statItem}>
-          <span className={styles.statNum}>{alumniCount}</span>
-          <span className={styles.statLabel}>Verified Alumni</span>
-        </div>
-        <div className={styles.statItem}>
-          <span className={styles.statNum}>100%</span>
-          <span className={styles.statLabel}>Institutional Integrity</span>
-        </div>
-        <div className={styles.statItem}>
-          <span className={styles.statNum}>24/7</span>
-          <span className={styles.statLabel}>Global Connectivity</span>
-        </div>
+          <section className={styles.card}>
+            <div className={styles.cardTitle}>
+              <Plus size={18} /> Recent Alumni Joins
+            </div>
+            <div className={styles.userList}>
+              {recentAlumni.map(u => (
+                <div key={u.id} className={styles.userCell}>
+                  <img src={u.imageUrl || `https://ui-avatars.com/api/?name=${u.name}&background=7B61FF&color=fff`} className={styles.cellAvatar} />
+                  <div className={styles.cellText}>
+                    <strong>{u.name}</strong>
+                    <span>Class of {u.gradYear} • {u.branch}</span>
+                  </div>
+                  <SyncButton userId={u.id} label="Synchronize" />
+                </div>
+              ))}
+            </div>
+            <Link href="/directory" className={styles.footerLink}>Explore Full Alumni Directory ➔</Link>
+          </section>
+
+          <section className={styles.card}>
+            <div className={styles.cardTitle}>
+              <Award size={18} /> Emerging Student Talent
+            </div>
+            <div className={styles.userList}>
+              {recentStudents.map(u => (
+                <div key={u.id} className={styles.userCell}>
+                  <img src={u.imageUrl || `https://ui-avatars.com/api/?name=${u.name}&background=7B61FF&color=fff`} className={styles.cellAvatar} />
+                  <div className={styles.cellText}>
+                    <strong>{u.name}</strong>
+                    <span>Starting {u.startYear} • {u.branch}</span>
+                  </div>
+                  <SyncButton userId={u.id} label="Sync Talents" />
+                </div>
+              ))}
+            </div>
+            <Link href="/students" className={styles.footerLink}>Meet Rising Undergraduates ➔</Link>
+          </section>
+        </main>
+
+        {/* Right Column: News & Careers */}
+        <aside className={styles.rightCol}>
+          <section className={styles.card}>
+            <div className={styles.cardTitle}><Briefcase size={18} /> Career Pathway Pulse</div>
+            <div className={styles.jobList}>
+              {recentJobs.map(job => (
+                <div key={job.id} className={styles.jobCell}>
+                  <strong>{job.title}</strong>
+                  <span>{job.company}</span>
+                  <Link href="/jobs" className={styles.tinyLink}>View Details</Link>
+                </div>
+              ))}
+            </div>
+            <Link href="/jobs" className={styles.footerLink}>All Opportunities ➔</Link>
+          </section>
+
+          <section className={styles.card}>
+            <div className={styles.cardTitle}><BookOpen size={18} /> Institutional Seat</div>
+            <div className={styles.seatInfo}>
+               <img src="https://upload.wikimedia.org/wikipedia/en/e/e0/Bipin_Tripathi_Kumaon_Institute_of_Technology_logo.png" className={styles.seatLogo} />
+               <p>Bipin Tripathi Kumaon Institute of Technology (BTKIT), Dwarahat was established in 1991 as an autonomous institution.</p>
+               <div className={styles.statBadge}>Legacy since 1991</div>
+            </div>
+          </section>
+        </aside>
+
       </div>
-    </main>
+    </div>
   );
 }

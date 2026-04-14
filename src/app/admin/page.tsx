@@ -5,6 +5,8 @@ import { redirect } from 'next/navigation';
 import CSVUploader from './CSVUploader';
 import VerifiedEmailList from './VerifiedEmailList';
 import UserApprovalList from './UserApprovalList';
+import OutreachCenter from './OutreachCenter';
+import JobApprovalPanel from './JobApprovalPanel';
 import styles from './page.module.css';
 
 const prisma = new PrismaClient();
@@ -12,34 +14,43 @@ const prisma = new PrismaClient();
 export default async function AdminDashboard() {
   const session = await verifySession();
   
-  if (session?.role !== 'ADMIN') {
-    redirect('/');
-  }
+  if (session?.role !== 'ADMIN') redirect('/');
 
-  const [users, verifiedEmails] = await Promise.all([
-    prisma.user.findMany({
-      orderBy: { createdAt: 'desc' }
-    }),
-    prisma.verifiedEmail.findMany({
+  const [users, verifiedEmails, verifiedCount, pendingJobs] = await Promise.all([
+    prisma.user.findMany({ orderBy: { createdAt: 'desc' } }),
+    prisma.verifiedEmail.findMany({ orderBy: { createdAt: 'desc' } }),
+    prisma.verifiedEmail.count(),
+    prisma.job.findMany({
+      where: { status: 'PENDING' },
+      include: { author: { select: { name: true } } },
       orderBy: { createdAt: 'desc' }
     })
   ]);
+
+  const registeredEmails = new Set(users.map(u => u.email));
+  const unregisteredVerified = verifiedEmails.filter(v => !registeredEmails.has(v.email));
 
   return (
     <div className={styles.container}>
       <header className={styles.dashboardHeader}>
         <div className={styles.headerTitle}>
           <h1>Admin Control Center</h1>
-          <p>KecAlumini.in • Institutional Oversight</p>
+          <p>KecAlumni.in • Institutional Oversight</p>
         </div>
         <div className={styles.statsRow}>
           <div className={styles.statCard}>
-            <span className={styles.statVal}>{users.length}</span>
-            <span className={styles.statLabel}>Total Members</span>
+            <span className={styles.statVal}>{verifiedCount}</span>
+            <span className={styles.statLabel}>Verified Alumni</span>
           </div>
           <div className={styles.statCard}>
             <span className={styles.statVal}>{users.filter(u => u.status === 'PENDING').length}</span>
-            <span className={styles.statLabel}>Pending Approvals</span>
+            <span className={styles.statLabel}>Pending Users</span>
+          </div>
+          <div className={styles.statCard}>
+            <span className={styles.statVal} style={{ color: pendingJobs.length > 0 ? '#f59e0b' : 'inherit' }}>
+              {pendingJobs.length}
+            </span>
+            <span className={styles.statLabel}>Jobs Awaiting Review</span>
           </div>
         </div>
       </header>
@@ -49,6 +60,8 @@ export default async function AdminDashboard() {
           <section className={styles.section}>
             <h2>Manage Access Whitelist</h2>
             <CSVUploader />
+            <OutreachCenter unregisteredVerified={unregisteredVerified} />
+            <br />
             <VerifiedEmailList initialEmails={verifiedEmails} />
           </section>
         </div>
@@ -56,6 +69,22 @@ export default async function AdminDashboard() {
         <div className={styles.rightCol}>
           <section className={styles.section}>
             <UserApprovalList initialUsers={users} />
+          </section>
+
+          {/* Job Approval Section */}
+          <section className={styles.section} style={{ marginTop: '1.5rem' }}>
+            <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              Job Posting Approvals
+              {pendingJobs.length > 0 && (
+                <span style={{
+                  background: '#f59e0b', color: 'white', borderRadius: '20px',
+                  fontSize: '0.7rem', padding: '0.15rem 0.6rem', fontWeight: 700
+                }}>
+                  {pendingJobs.length} pending
+                </span>
+              )}
+            </h2>
+            <JobApprovalPanel initialJobs={pendingJobs} />
           </section>
         </div>
       </div>

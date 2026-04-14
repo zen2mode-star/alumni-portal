@@ -2,48 +2,122 @@
 
 import { PrismaClient } from '@prisma/client';
 import { verifySession } from '@/lib/session';
-import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 const prisma = new PrismaClient();
 
 export async function createJob(formData: FormData) {
-  const session = await verifySession();
-  if (!session || session.role === 'STUDENT') throw new Error('Not authorized to post jobs');
+  try {
+    const session = await verifySession();
+    if (!session) return { error: 'Not authenticated' };
 
-  const title = formData.get('title') as string;
-  const company = formData.get('company') as string;
-  const description = formData.get('description') as string;
-  const link = (formData.get('link') as string) || '';
+    const title = formData.get('title') as string;
+    const company = formData.get('company') as string;
+    const description = formData.get('description') as string;
+    const link = formData.get('link') as string;
 
-  await prisma.job.create({
-    data: {
-      title,
-      company,
-      description,
-      link,
-      authorId: session.userId
-    }
-  });
+    await prisma.job.create({
+      data: {
+        title,
+        company,
+        description,
+        link,
+        authorId: session.userId,
+        status: 'PENDING', // Awaiting admin approval before going live
+      }
+    });
 
-  revalidatePath('/jobs');
+    revalidatePath('/jobs');
+    revalidatePath('/');
+    
+    // Redirect must be outside try-catch to properly bubble up
+  } catch (error) {
+    return { error: 'Failed to post job' };
+  }
   redirect('/jobs');
 }
 
-export async function applyForJob(jobId: string, authorId: string, jobTitle: string) {
-  const session = await verifySession();
-  if (!session) return { error: 'Please sign in to apply.' };
+export async function toggleJobInterest(jobId: string) {
+  try {
+    const session = await verifySession();
+    if (!session) return { error: 'Not authenticated' };
 
-  const applicant = await prisma.user.findUnique({ where: { id: session.userId } });
+    const existing = await prisma.jobInterest.findUnique({
+      where: {
+        userId_jobId: {
+          userId: session.userId,
+          jobId
+        }
+      }
+    });
 
-  // Send an automated direct message using the existing messaging system!
-  await prisma.message.create({
-    data: {
-      content: `Hello! I would like to apply for the position of "${jobTitle}" you recently posted. Please check out my profile and let me know the next steps. Thank you! - ${applicant?.name}`,
-      senderId: session.userId,
-      receiverId: authorId
+    if (existing) {
+      await prisma.jobInterest.delete({
+        where: { id: existing.id }
+      });
+    } else {
+      await prisma.jobInterest.create({
+        data: {
+          userId: session.userId,
+          jobId
+        }
+      });
     }
-  });
 
-  return { success: true, message: 'Application sent! The poster has been notified in their Messages.' };
+    revalidatePath('/jobs');
+    return { success: true };
+  } catch (error) {
+    return { error: 'Failed to update interest' };
+  }
+}
+
+export async function deleteJob(jobId: string) {
+  try {
+    const session = await verifySession();
+    if (!session) return { error: 'Not authenticated' };
+
+    const job = await prisma.job.findUnique({ where: { id: jobId } });
+    if (!job) return { error: 'Job not found' };
+
+    // Check if user is author OR admin
+    if (job.authorId !== session.userId && session.role !== 'ADMIN') {
+      return { error: 'Unauthorized' };
+    }
+
+    await prisma.job.delete({ where: { id: jobId } });
+
+    revalidatePath('/jobs');
+    revalidatePath('/admin');
+    revalidatePath('/');
+    return { success: true };
+  } catch (error) {
+    return { error: 'Failed to delete job' };
+  }
+}
+
+export async function approveJob(jobId: string) {
+  try {
+    const session = await verifySession();
+    if (session?.role !== 'ADMIN') return { error: 'Unauthorized' };
+    await prisma.job.update({ where: { id: jobId }, data: { status: 'APPROVED' } });
+    revalidatePath('/jobs');
+    revalidatePath('/admin');
+    return { success: true };
+  } catch (error) {
+    return { error: 'Failed to approve job' };
+  }
+}
+
+export async function rejectJob(jobId: string) {
+  try {
+    const session = await verifySession();
+    if (session?.role !== 'ADMIN') return { error: 'Unauthorized' };
+    await prisma.job.delete({ where: { id: jobId } });
+    revalidatePath('/jobs');
+    revalidatePath('/admin');
+    return { success: true };
+  } catch (error) {
+    return { error: 'Failed to reject job' };
+  }
 }

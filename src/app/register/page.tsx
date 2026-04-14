@@ -38,6 +38,11 @@ export default function RegisterPage() {
             <label>Email Address</label>
             <input type="email" name="email" required placeholder="you@btkit.ac.in" />
           </div>
+
+          <div className={styles.formGroup}>
+            <label>Institutional Verification Code</label>
+            <input type="text" name="authCode" required placeholder="e.g. A9B2X (5-digits)" maxLength={5} />
+          </div>
           
           <div className={styles.formGroup}>
             <label>Password</label>

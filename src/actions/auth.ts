@@ -37,13 +37,18 @@ export async function register(formData: FormData) {
     const password = formData.get('password')?.toString();
     const name = formData.get('name')?.toString();
     const role = formData.get('role')?.toString();
+    const authCode = formData.get('authCode')?.toString();
 
-    if (!email || !password || !name || !role) return { error: 'All fields are required' };
+    if (!email || !password || !name || !role || !authCode) return { error: 'All fields are required' };
 
     // 1. Verify against official alumni list (VerifiedEmail)
     const verified = await prisma.verifiedEmail.findUnique({ where: { email } });
     if (!verified) {
       return { error: 'Your email is not in the institutional database. Please contact the administrator.' };
+    }
+
+    if (verified.authCode !== authCode) {
+      return { error: 'Invalid Institutional Verification Code for this email.' };
     }
 
     // 2. Check if user already exists
@@ -62,7 +67,7 @@ export async function register(formData: FormData) {
         status: 'PENDING',
         startYear: verified.startYear,
         gradYear: verified.gradYear,
-        imageUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(verified.name || name)}&background=24A1DE&color=fff`,
+        imageUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(verified.name || name)}&background=7B61FF&color=fff`,
       }
     });
 

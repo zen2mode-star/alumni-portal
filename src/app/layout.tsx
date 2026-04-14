@@ -7,8 +7,8 @@ import "./globals.css";
 const prisma = new PrismaClient();
 
 export const metadata = {
-  title: "KecAlumini.in - Alumni Network",
-  description: "Join the official alumni network of KecAlumini.in.",
+  title: "KecAlumni.in - Alumni Network",
+  description: "Join the official alumni network of BTKIT Dwarahat — KecAlumni.in.",
 };
 
 export default async function RootLayout({

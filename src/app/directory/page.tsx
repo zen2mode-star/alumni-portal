@@ -23,7 +23,6 @@ export default async function DirectoryPage() {
     }
   });
 
-  // Map db fields to match component expectations
   const formattedAlumni = alumni.map(a => ({
     id: a.id,
     name: a.name,
@@ -32,9 +31,16 @@ export default async function DirectoryPage() {
     company: a.company || 'Searching...',
     role: a.jobRole || 'Professional',
     skills: a.skills ? a.skills.split(',') : [],
-    imageUrl: a.imageUrl || `https://ui-avatars.com/api/?name=${a.name}`,
-    bio: a.bio || 'Happy to connect!',
+    imageUrl: a.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(a.name)}&background=7B61FF&color=fff`,
+    bio: a.bio || 'Verified Institutional Alumni',
   }));
 
-  return <DirectoryClient initialData={formattedAlumni} />;
+  return (
+    <div className="institutional-container">
+      <DirectoryClient 
+        initialData={formattedAlumni} 
+        iconType="alumni"
+      />
+    </div>
+  );
 }

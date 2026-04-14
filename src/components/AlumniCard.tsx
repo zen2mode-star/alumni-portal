@@ -26,11 +26,17 @@ export default function AlumniCard({ alumni }: Props) {
           )}
         </div>
         
-        <div className={styles.roleLine}>
-          <span className={styles.role}>{alumni.role}</span>
-          <span className={styles.at}>@</span>
-          <span className={styles.company}>{alumni.company}</span>
-        </div>
+        {alumni.isStudent ? (
+          <div className={styles.roleLine}>
+            <span className={styles.studentBadge}>Emerging Institutional Talent</span>
+          </div>
+        ) : (
+          <div className={styles.roleLine}>
+            <span className={styles.role}>{alumni.role}</span>
+            <span className={styles.at}>@</span>
+            <span className={styles.company}>{alumni.company}</span>
+          </div>
+        )}
 
         <p className={styles.bio}>{alumni.bio}</p>
 

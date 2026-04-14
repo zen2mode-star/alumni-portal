@@ -15,7 +15,10 @@ export default async function NewJobPage() {
         <h2>Post an Opportunity</h2>
         <p>Hire from the BTKIT Alumni Network.</p>
         
-        <form action={createJob} className={styles.form}>
+        <form action={async (formData) => {
+          'use server';
+          await createJob(formData);
+        }} className={styles.form}>
           <div className={styles.formGroup}>
             <label>Job Title</label>
             <input type="text" name="title" required placeholder="e.g. Software Engineer" />

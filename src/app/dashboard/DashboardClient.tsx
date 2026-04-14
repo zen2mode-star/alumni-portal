@@ -12,6 +12,7 @@ interface DashboardProps {
 }
 
 export default function DashboardClient({ user, pendingMessages }: DashboardProps) {
+  const [activeTab, setActiveTab] = useState<'core' | 'roots' | 'presence'>('core');
   const [status, setStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState(user.imageUrl || '');
@@ -31,21 +32,20 @@ export default function DashboardClient({ user, pendingMessages }: DashboardProp
     e.preventDefault();
     setLoading(true);
     setStatus(null);
-    const formData = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
     const res = await changePassword(formData);
     setLoading(false);
     if (res?.error) setStatus({ type: 'error', message: res.error });
     else if (res?.success) {
       setStatus({ type: 'success', message: res.message });
-      e.currentTarget.reset();
+      form.reset();
     }
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setPhotoPreview(URL.createObjectURL(file));
-    }
+    if (file) setPhotoPreview(URL.createObjectURL(file));
   };
 
   return (
@@ -53,31 +53,23 @@ export default function DashboardClient({ user, pendingMessages }: DashboardProp
       {loading && (
         <div className={styles.executiveLoader}>
           <LittleTiger loading={true} size={150} />
-          <p className={styles.loaderText}>Processing secure update...</p>
+          <p className={styles.loaderText}>Synchronizing Institutional Data...</p>
         </div>
       )}
 
       <header className={styles.identityHeader}>
         <div className={styles.auraBg}></div>
-        <div className={styles.identityVisual}>
-          <img
-            src={photoPreview || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=0A1128&color=fff`}
-            alt={user.name}
-            className={styles.avatar}
-          />
-          <div className={styles.batchBadge}>Class of {user.gradYear}</div>
-        </div>
+        <img
+          src={photoPreview || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=0A1128&color=fff`}
+          alt={user.name}
+          className={styles.avatar}
+        />
         <div className={styles.identityInfo}>
           <h1>{user.name} <span className={styles.roleTag}>{user.role}</span></h1>
-          <p className={styles.currentPosition}>{user.jobRole || 'Institutional Fellow'} {user.company ? `@ ${user.company}` : ''}</p>
-          <div className={styles.contactBar}>
-            {user.linkedinUrl && (
-              <a href={user.linkedinUrl} target="_blank" rel="noopener noreferrer" className={styles.badgeLink}>
-                 Official LinkedIn Profile ↗
-              </a>
-            )}
-            <span className={styles.statusLabel}>{user.status} ACCOUNT</span>
-          </div>
+          <p className={styles.currentPosition}>
+            {user.jobRole || 'Institutional Fellow'} {user.company ? `@ ${user.company}` : ''}
+            {user.location ? ` | ${user.location}` : ''}
+          </p>
         </div>
       </header>
 
@@ -89,71 +81,142 @@ export default function DashboardClient({ user, pendingMessages }: DashboardProp
 
       <div className={styles.dashboardGrid}>
         <section className={styles.glassCard}>
-          <div className={styles.cardHeader}>
-            <h3>Professional Biography</h3>
-            <span>Public Identity</span>
+          <div className={styles.tabHeader}>
+            <button onClick={() => setActiveTab('core')} className={activeTab === 'core' ? styles.activeTab : ''}>Core Identity</button>
+            <button onClick={() => setActiveTab('roots')} className={activeTab === 'roots' ? styles.activeTab : ''}>Institutional Roots</button>
+            <button onClick={() => setActiveTab('presence')} className={activeTab === 'presence' ? styles.activeTab : ''}>Digital Presence</button>
           </div>
+
           <form onSubmit={handleProfileUpdate} className={styles.modernForm}>
-            <div className={styles.formRow}>
-              <div className={styles.inputGroup}>
-                <label>Institutional Company</label>
-                <input type="text" name="company" defaultValue={user.company || ''} placeholder="e.g. Google" />
+            {activeTab === 'core' && (
+              <div className="animate-pop">
+                <div className={styles.formRow}>
+                  <div className={styles.inputGroup}>
+                    <label>Public Name</label>
+                    <input type="text" name="name" defaultValue={user.name} disabled />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Institutional Location</label>
+                    <input type="text" name="location" defaultValue={user.location || ''} placeholder="e.g. Noida, India" />
+                  </div>
+                </div>
+                <div className={styles.formRow}>
+                  <div className={styles.inputGroup}>
+                    <label>Contact Phone</label>
+                    <input type="tel" name="phone" defaultValue={user.phone || ''} placeholder="+91 ..." />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Personal Website</label>
+                    <input type="url" name="website" defaultValue={user.website || ''} placeholder="https://..." />
+                  </div>
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Identity Image</label>
+                  <input type="file" name="profileImage" accept="image/*" onChange={handleFileChange} />
+                  <input type="hidden" name="existingImageUrl" value={user.imageUrl || ''} />
+                </div>
+                <div className={styles.inputGroup}>
+                   <label>Identity Narrative</label>
+                   <textarea name="bio" defaultValue={user.bio || ''} placeholder="Condense your institutional journey..." />
+                </div>
               </div>
-              <div className={styles.inputGroup}>
-                <label>Designation</label>
-                <input type="text" name="jobRole" defaultValue={user.jobRole || ''} placeholder="e.g. Lead Engineer" />
+            )}
+
+            {activeTab === 'roots' && (
+              <div className="animate-pop">
+                <div className={styles.formRow}>
+                  <div className={styles.inputGroup}>
+                    <label>Branch / Department</label>
+                    <input type="text" name="branch" defaultValue={user.branch || ''} placeholder="e.g. Computer Science" />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Roll Number (Institutional)</label>
+                    <input type="text" name="rollNumber" defaultValue={user.rollNumber || ''} placeholder="KEC-..." />
+                  </div>
+                </div>
+                <div className={styles.formRow}>
+                  <div className={styles.inputGroup}>
+                    <label>Hostel Name</label>
+                    <input type="text" name="hostel" defaultValue={user.hostel || ''} placeholder="e.g. Aravali" />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Graduation Year</label>
+                    <input type="number" name="gradYear" defaultValue={user.gradYear || 2024} />
+                  </div>
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Higher Studies (Optional)</label>
+                  <input type="text" name="higherStudies" defaultValue={user.higherStudies || ''} placeholder="e.g. M.Tech at IIT Kanpur" />
+                </div>
               </div>
-            </div>
+            )}
 
-            <div className={styles.inputGroup}>
-              <label>LinkedIn Professional URL</label>
-              <input type="url" name="linkedinUrl" defaultValue={user.linkedinUrl || ''} placeholder="https://linkedin.com/in/..." />
-            </div>
-
-            <div className={styles.inputGroup}>
-              <label>Identity Image (JPEG/PNG)</label>
-              <div className={styles.fileCustom}>
-                <input type="file" name="profileImage" accept="image/jpeg,image/png" onChange={handleFileChange} id="file-upload" />
-                <label htmlFor="file-upload">Choose New Perspective</label>
+            {activeTab === 'presence' && (
+              <div className="animate-pop">
+                <div className={styles.formRow}>
+                  <div className={styles.inputGroup}>
+                    <label>Institutional Company</label>
+                    <input type="text" name="company" defaultValue={user.company || ''} placeholder="Current Employer" />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Designation</label>
+                    <input type="text" name="jobRole" defaultValue={user.jobRole || ''} placeholder="e.g. Software Architect" />
+                  </div>
+                </div>
+                <div className={styles.formRow}>
+                   <div className={styles.inputGroup}>
+                     <label>LinkedIn URL</label>
+                     <input type="url" name="linkedinUrl" defaultValue={user.linkedinUrl || ''} />
+                   </div>
+                   <div className={styles.inputGroup}>
+                     <label>GitHub Profile</label>
+                     <input type="url" name="githubUrl" defaultValue={user.githubUrl || ''} />
+                   </div>
+                </div>
+                <div className={styles.formRow}>
+                   <div className={styles.inputGroup}>
+                     <label>Twitter / X Profile</label>
+                     <input type="url" name="twitterUrl" defaultValue={user.twitterUrl || ''} />
+                   </div>
+                   <div className={styles.inputGroup}>
+                     <label>Instagram Handle</label>
+                     <input type="text" name="instagramUrl" defaultValue={user.instagramUrl || ''} />
+                   </div>
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Institutional Accolades & Achievements</label>
+                  <textarea name="achievements" defaultValue={user.achievements || ''} placeholder="List honors, awards, and milestones..." />
+                </div>
               </div>
-              <input type="hidden" name="existingImageUrl" value={user.imageUrl || ''} />
-            </div>
+            )}
 
-            <div className={styles.inputGroup}>
-              <label>Professional Narrative</label>
-              <textarea name="bio" defaultValue={user.bio || ''} placeholder="Condense your journey..." />
-            </div>
-
-            <button type="submit" className="btn btn-primary" disabled={loading}>Commit Profile Updates</button>
+            <button type="submit" className="btn btn-primary" disabled={loading}>Commit Dossier Updates</button>
           </form>
         </section>
 
         <aside className={styles.controlPanel}>
           <div className={styles.glassCard}>
-            <h3>Secure Credentials</h3>
+            <h3>Account Security</h3>
             <form onSubmit={handlePasswordChange} className={styles.modernForm}>
               <div className={styles.inputGroup}>
-                <label>Current Ledger Key</label>
-                <input type="password" name="prevPassword" required placeholder="••••••••" />
+                <input type="password" name="prevPassword" required placeholder="Current Key" />
               </div>
               <div className={styles.inputGroup}>
-                <label>New Authorized Key</label>
-                <input type="password" name="newPassword" required placeholder="••••••••" />
+                <input type="password" name="newPassword" required placeholder="New Secure Key" />
               </div>
-              <button type="submit" className="btn btn-glass" style={{width:'100%'}}>Authorize Update</button>
+              <button type="submit" className="btn btn-glass" style={{width:'100%'}}>Update Credentials</button>
             </form>
           </div>
-
           <div className={styles.actionGrid}>
              <Link href="/messages" className={styles.actionTile}>
                <span className={styles.tileIcon}>✉️</span>
-               <span className={styles.tileText}>Secure Inbox</span>
+               <span className={styles.tileText}>Direct Dialogue</span>
                {pendingMessages > 0 && <span className={styles.tileBadge}>{pendingMessages}</span>}
              </Link>
              <form action={logout}>
                <button type="submit" className={styles.logoutTile}>
                  <span className={styles.tileIcon}>⏻</span>
-                 <span className={styles.tileText}>Terminate Session</span>
+                 <span className={styles.tileText}>End Session</span>
                </button>
              </form>
           </div>
