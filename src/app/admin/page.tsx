@@ -7,6 +7,8 @@ import VerifiedEmailList from './VerifiedEmailList';
 import UserApprovalList from './UserApprovalList';
 import OutreachCenter from './OutreachCenter';
 import JobApprovalPanel from './JobApprovalPanel';
+import HomeManager from './HomeManager';
+import AdminJobPost from './AdminJobPost';
 import styles from './page.module.css';
 
 const prisma = new PrismaClient();
@@ -24,7 +26,9 @@ export default async function AdminDashboard() {
       where: { status: 'PENDING' },
       include: { author: { select: { name: true } } },
       orderBy: { createdAt: 'desc' }
-    })
+    }),
+    prisma.homeBanner.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
+    prisma.homeCompany.findMany({ orderBy: { order: 'asc' } }).catch(() => [])
   ]);
 
   const registeredEmails = new Set(users.map(u => u.email));
@@ -35,7 +39,7 @@ export default async function AdminDashboard() {
       <header className={styles.dashboardHeader}>
         <div className={styles.headerTitle}>
           <h1>Admin Control Center</h1>
-          <p>KecAlumni.in • Institutional Oversight</p>
+          <p>KecAlumni.in • Campus Oversight</p>
         </div>
         <div className={styles.statsRow}>
           <div className={styles.statCard}>
@@ -64,6 +68,11 @@ export default async function AdminDashboard() {
             <br />
             <VerifiedEmailList initialEmails={verifiedEmails} />
           </section>
+
+          <section className={styles.section} style={{ marginTop: '1.5rem' }}>
+            <h2>Home Page Content</h2>
+            <HomeManager initialBanners={banners} initialCompanies={companies} />
+          </section>
         </div>
 
         <div className={styles.rightCol}>
@@ -85,6 +94,11 @@ export default async function AdminDashboard() {
               )}
             </h2>
             <JobApprovalPanel initialJobs={pendingJobs} />
+          </section>
+
+          <section className={styles.section} style={{ marginTop: '1.5rem' }}>
+             <h2>Post Campus Job</h2>
+             <AdminJobPost />
           </section>
         </div>
       </div>

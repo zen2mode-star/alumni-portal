@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
@@ -24,20 +24,38 @@ interface Props {
   unreadCount: number;
   latestUnread: any;
   isAdmin: boolean;
+  latestPostTime?: string | null;
 }
 
-export default function TopNavbar({ user, unreadCount, isAdmin }: Props) {
+export default function TopNavbar({ user, unreadCount, isAdmin, latestPostTime }: Props) {
   const [isMeOpen, setIsMeOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [hasNewPosts, setHasNewPosts] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (latestPostTime) {
+      const lastSeen = localStorage.getItem('lastSeenKecPostTime');
+      if (!lastSeen || new Date(latestPostTime) > new Date(lastSeen)) {
+        setHasNewPosts(true);
+      }
+    }
+  }, [latestPostTime]);
+
+  useEffect(() => {
+    if (pathname === '/feed') {
+      localStorage.setItem('lastSeenKecPostTime', new Date().toISOString());
+      setHasNewPosts(false);
+    }
+  }, [pathname]);
 
   const navItems = [
     { label: 'Home', icon: Home, href: '/' },
     { label: 'Alumni Network', icon: Users, href: '/directory' },
     { label: 'Undergrad Network', icon: GraduationCap, href: '/students' },
     { label: 'Careers', icon: Briefcase, href: '/jobs' },
-    { label: 'Dialogue', icon: MessageSquare, href: '/messages', badge: unreadCount },
-    { label: 'Institutional', icon: Bell, href: '/feed' },
+    { label: 'Messages', icon: MessageSquare, href: '/messages', badge: unreadCount },
+    { label: 'Kec Feed', icon: Bell, href: '/feed' },
   ];
 
   return (
@@ -51,7 +69,7 @@ export default function TopNavbar({ user, unreadCount, isAdmin }: Props) {
           </Link>
           <div className={styles.searchWrapper}>
             <Search className={styles.searchIcon} size={18} />
-            <input type="text" placeholder="Search Institutional Ledger..." className={styles.searchInput} />
+            <input type="text" placeholder="Search Kec Feed..." className={styles.searchInput} />
           </div>
         </div>
 
@@ -70,6 +88,7 @@ export default function TopNavbar({ user, unreadCount, isAdmin }: Props) {
                 <div className={styles.iconWrapper}>
                   <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
                   {item.badge && item.badge > 0 && <span className={styles.badge}>{item.badge}</span>}
+                  {item.label === 'Kec Feed' && hasNewPosts && !isActive && <span className={styles.notificationDot}></span>}
                 </div>
                 <span className={styles.label}>{item.label}</span>
               </Link>
@@ -97,12 +116,12 @@ export default function TopNavbar({ user, unreadCount, isAdmin }: Props) {
                 <div className={styles.dropdownMenu} onMouseLeave={() => setIsMeOpen(false)}>
                    <div className={styles.userHead}>
                      <strong>{user.name}</strong>
-                     <Link href="/dashboard" onClick={() => setIsMeOpen(false)}>View Dossier</Link>
+                     <Link href="/dashboard" onClick={() => setIsMeOpen(false)}>View Profile</Link>
                    </div>
                    <div className={styles.menuLinks}>
                      {isAdmin && (
                        <Link href="/admin" onClick={() => setIsMeOpen(false)}>
-                         <Settings size={16} /> Admin Command
+                         <Settings size={16} /> Admin Dashboard
                        </Link>
                      )}
                      <div className={styles.themeRow}>
@@ -111,7 +130,7 @@ export default function TopNavbar({ user, unreadCount, isAdmin }: Props) {
                      </div>
                      <form action={logout}>
                        <button type="submit" className={styles.logoutBtn}>
-                         <LogOut size={16} /> End Session
+                         <LogOut size={16} /> Log Out
                        </button>
                      </form>
                    </div>
@@ -119,7 +138,7 @@ export default function TopNavbar({ user, unreadCount, isAdmin }: Props) {
               )}
             </div>
           ) : (
-             <Link href="/login" className={styles.authLink}>Institutional Login</Link>
+             <Link href="/login" className={styles.authLink}>Login / Register</Link>
           )}
         </div>
 

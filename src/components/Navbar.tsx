@@ -10,6 +10,7 @@ export default async function Navbar() {
   let unreadCount = 0;
   let user = null;
   let latestUnread: any = null;
+  let latestPostTime: any = null;
 
   if (session?.userId) {
     const data = await Promise.all([
@@ -30,11 +31,16 @@ export default async function Navbar() {
         },
         orderBy: { createdAt: 'desc' },
         include: { sender: { select: { name: true } } }
+      }),
+      prisma.post.findFirst({
+        orderBy: { createdAt: 'desc' },
+        select: { createdAt: true }
       })
     ]);
     unreadCount = data[0];
     user = data[1];
     latestUnread = data[2];
+    latestPostTime = data[3]?.createdAt?.toISOString() || null;
   }
 
   return (
@@ -43,6 +49,7 @@ export default async function Navbar() {
       unreadCount={unreadCount} 
       latestUnread={latestUnread}
       isAdmin={session?.role === 'ADMIN'}
+      latestPostTime={latestPostTime}
     />
   );
 }

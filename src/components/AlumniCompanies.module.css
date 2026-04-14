@@ -1,0 +1,68 @@
+.container {
+  margin: 3rem 0;
+  padding: 2rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.title {
+  text-align: center;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #888;
+  margin-bottom: 2rem;
+}
+
+.logoRow {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+.scrollTrack {
+  display: flex;
+  gap: 4rem;
+  animation: scroll 40s linear infinite;
+  white-space: nowrap;
+  align-items: center;
+}
+
+.companyBadge {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+  filter: grayscale(1);
+}
+
+.companyBadge:hover {
+  opacity: 1;
+  filter: grayscale(0);
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.companyName {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@media (max-width: 768px) {
+  .scrollTrack {
+    gap: 2rem;
+  }
+}

@@ -138,6 +138,19 @@
   border: 2px solid var(--bg-color);
 }
 
+.iconWrapper { position: relative; }
+
+.notificationDot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
 .label {
   white-space: nowrap;
 }

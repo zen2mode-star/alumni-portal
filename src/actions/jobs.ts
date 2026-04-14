@@ -24,7 +24,7 @@ export async function createJob(formData: FormData) {
         description,
         link,
         authorId: session.userId,
-        status: 'PENDING', // Awaiting admin approval before going live
+        status: session.role === 'ADMIN' ? 'APPROVED' : 'PENDING',
       }
     });
 
@@ -119,5 +119,35 @@ export async function rejectJob(jobId: string) {
     return { success: true };
   } catch (error) {
     return { error: 'Failed to reject job' };
+  }
+}
+
+export async function adminCreateJob(formData: FormData) {
+  try {
+    const session = await verifySession();
+    if (session?.role !== 'ADMIN') return { error: 'Unauthorized' };
+
+    const title = formData.get('title') as string;
+    const company = formData.get('company') as string;
+    const description = formData.get('description') as string;
+    const link = formData.get('link') as string;
+
+    await prisma.job.create({
+      data: {
+        title,
+        company,
+        description,
+        link,
+        authorId: session.userId,
+        status: 'APPROVED',
+      }
+    });
+
+    revalidatePath('/jobs');
+    revalidatePath('/admin');
+    revalidatePath('/');
+    return { success: true };
+  } catch (error) {
+    return { error: 'Failed to post job' };
   }
 }

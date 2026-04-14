@@ -53,7 +53,7 @@ export default function DashboardClient({ user, pendingMessages }: DashboardProp
       {loading && (
         <div className={styles.executiveLoader}>
           <LittleTiger loading={true} size={150} />
-          <p className={styles.loaderText}>Synchronizing Institutional Data...</p>
+          <p className={styles.loaderText}>Synchronizing Profile Data...</p>
         </div>
       )}
 
@@ -67,7 +67,7 @@ export default function DashboardClient({ user, pendingMessages }: DashboardProp
         <div className={styles.identityInfo}>
           <h1>{user.name} <span className={styles.roleTag}>{user.role}</span></h1>
           <p className={styles.currentPosition}>
-            {user.jobRole || 'Institutional Fellow'} {user.company ? `@ ${user.company}` : ''}
+            {user.jobRole || 'Campus Fellow'} {user.company ? `@ ${user.company}` : ''}
             {user.location ? ` | ${user.location}` : ''}
           </p>
         </div>
@@ -83,7 +83,7 @@ export default function DashboardClient({ user, pendingMessages }: DashboardProp
         <section className={styles.glassCard}>
           <div className={styles.tabHeader}>
             <button onClick={() => setActiveTab('core')} className={activeTab === 'core' ? styles.activeTab : ''}>Core Identity</button>
-            <button onClick={() => setActiveTab('roots')} className={activeTab === 'roots' ? styles.activeTab : ''}>Institutional Roots</button>
+            <button onClick={() => setActiveTab('roots')} className={activeTab === 'roots' ? styles.activeTab : ''}>Campus Roots</button>
             <button onClick={() => setActiveTab('presence')} className={activeTab === 'presence' ? styles.activeTab : ''}>Digital Presence</button>
           </div>
 
@@ -96,7 +96,7 @@ export default function DashboardClient({ user, pendingMessages }: DashboardProp
                     <input type="text" name="name" defaultValue={user.name} disabled />
                   </div>
                   <div className={styles.inputGroup}>
-                    <label>Institutional Location</label>
+                    <label>Current Location</label>
                     <input type="text" name="location" defaultValue={user.location || ''} placeholder="e.g. Noida, India" />
                   </div>
                 </div>
@@ -130,7 +130,7 @@ export default function DashboardClient({ user, pendingMessages }: DashboardProp
                     <input type="text" name="branch" defaultValue={user.branch || ''} placeholder="e.g. Computer Science" />
                   </div>
                   <div className={styles.inputGroup}>
-                    <label>Roll Number (Institutional)</label>
+                    <label>Roll Number</label>
                     <input type="text" name="rollNumber" defaultValue={user.rollNumber || ''} placeholder="KEC-..." />
                   </div>
                 </div>
@@ -155,7 +155,7 @@ export default function DashboardClient({ user, pendingMessages }: DashboardProp
               <div className="animate-pop">
                 <div className={styles.formRow}>
                   <div className={styles.inputGroup}>
-                    <label>Institutional Company</label>
+                    <label>Current Company</label>
                     <input type="text" name="company" defaultValue={user.company || ''} placeholder="Current Employer" />
                   </div>
                   <div className={styles.inputGroup}>
@@ -184,13 +184,13 @@ export default function DashboardClient({ user, pendingMessages }: DashboardProp
                    </div>
                 </div>
                 <div className={styles.inputGroup}>
-                  <label>Institutional Accolades & Achievements</label>
+                  <label>Accolades & Achievements</label>
                   <textarea name="achievements" defaultValue={user.achievements || ''} placeholder="List honors, awards, and milestones..." />
                 </div>
               </div>
             )}
 
-            <button type="submit" className="btn btn-primary" disabled={loading}>Commit Dossier Updates</button>
+            <button type="submit" className="btn btn-primary" disabled={loading}>Update Profile</button>
           </form>
         </section>
 
@@ -210,13 +210,13 @@ export default function DashboardClient({ user, pendingMessages }: DashboardProp
           <div className={styles.actionGrid}>
              <Link href="/messages" className={styles.actionTile}>
                <span className={styles.tileIcon}>✉️</span>
-               <span className={styles.tileText}>Direct Dialogue</span>
+               <span className={styles.tileText}>Direct Messages</span>
                {pendingMessages > 0 && <span className={styles.tileBadge}>{pendingMessages}</span>}
              </Link>
              <form action={logout}>
                <button type="submit" className={styles.logoutTile}>
                  <span className={styles.tileIcon}>⏻</span>
-                 <span className={styles.tileText}>End Session</span>
+                 <span className={styles.tileText}>Log Out</span>
                </button>
              </form>
           </div>

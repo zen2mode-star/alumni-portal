@@ -109,20 +109,3 @@ model VerifiedEmail {
   gradYear  Int?
   createdAt DateTime @default(now())
 }
-
-model HomeBanner {
-  id        String   @id @default(cuid())
-  imageUrl  String
-  title     String?
-  link      String?
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
-}
-
-model HomeCompany {
-  id        String   @id @default(cuid())
-  name      String
-  logoUrl   String?
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
-}

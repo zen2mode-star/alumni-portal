@@ -9,11 +9,18 @@
 }
 
 .card {
-  background: var(--card-bg);
+  background: var(--bg-elevated);
   border: 1px solid var(--card-border);
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
+  border-radius: 16px;
+  margin-bottom: 2rem;
   overflow: hidden;
+  box-shadow: var(--shadow-premium);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
 }
 
 .cardTitle {
@@ -112,11 +119,29 @@
 
 /* Center Column */
 .pulseHeader {
-  background: linear-gradient(135deg, #111115 0%, #1a1a2e 100%);
-  border: 1px solid var(--card-border);
-  padding: 2rem;
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #0A1128 0%, #1c1c3c 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3rem 2rem;
+  border-radius: 20px;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.pulseHeader::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(123, 97, 255, 0.1) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 [data-theme='light'] .pulseHeader {

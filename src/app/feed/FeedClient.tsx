@@ -52,7 +52,7 @@ export default function FeedClient({ alumniPosts, studentPosts, user, isAdmin }:
       <header className={styles.header}>
         <div className={styles.headerIcon}>📢</div>
         <div className={styles.headerText}>
-           <h1>Institutional Social Feed</h1>
+           <h1>Kec Community Feed</h1>
            <p>Conversations across the KEC network</p>
         </div>
       </header>
@@ -61,7 +61,7 @@ export default function FeedClient({ alumniPosts, studentPosts, user, isAdmin }:
         <section className={styles.composerCard}>
           <div className={styles.composerHeader}>
              <img src={user.imageUrl || `https://ui-avatars.com/api/?name=${user.name}&background=0A1128&color=fff`} className={styles.composerAvatar} />
-             <span>Share an institutional insight, {user.name.split(' ')[0]}...</span>
+             <span>Share a campus update, {user.name.split(' ')[0]}...</span>
           </div>
           <form onSubmit={handlePostSubmit} className={styles.composerForm}>
             <textarea 
@@ -101,7 +101,7 @@ export default function FeedClient({ alumniPosts, studentPosts, user, isAdmin }:
               <div className={styles.submitSection}>
                 {error && <span className={styles.errorText}>{error}</span>}
                 <button type="submit" disabled={loading} className="btn btn-primary">
-                  {loading ? 'Publishing...' : 'Push to Network'}
+                  {loading ? 'Publishing...' : 'Post to Feed'}
                 </button>
               </div>
             </div>
@@ -114,13 +114,13 @@ export default function FeedClient({ alumniPosts, studentPosts, user, isAdmin }:
           onClick={() => setActiveTab('alumni')} 
           className={`${styles.tabBtn} ${activeTab === 'alumni' ? styles.activeTab : ''}`}
         >
-          Alumni Insights ({alumniPosts.length})
+          Alumni Feed ({alumniPosts.length})
         </button>
         <button 
           onClick={() => setActiveTab('student')} 
           className={`${styles.tabBtn} ${activeTab === 'student' ? styles.activeTab : ''}`}
         >
-          Student Dialogue ({studentPosts.length})
+          Student Posts ({studentPosts.length})
         </button>
       </div>
 
@@ -130,7 +130,7 @@ export default function FeedClient({ alumniPosts, studentPosts, user, isAdmin }:
         ))}
         {currentPosts.length === 0 && (
           <div className={styles.emptyFeed}>
-            <p>No verified institutional dialogue found in this channel yet.</p>
+            <p>No verified feed posts found in this channel yet.</p>
           </div>
         )}
       </div>

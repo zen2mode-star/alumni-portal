@@ -2,15 +2,10 @@ export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { PrismaClient } from '@prisma/client';
 import { verifySession } from '@/lib/session';
-import { 
-  Users, 
-  GraduationCap, 
-  Briefcase, 
-  Plus, 
-  Award,
-  BookOpen
-} from 'lucide-react';
+import { Award, BookOpen, Briefcase, GraduationCap, Plus, Users, Image as ImageIcon } from 'lucide-react';
 import SyncButton from '@/components/SyncButton';
+import HomeCarousel from '@/components/HomeCarousel';
+import AlumniCompanies from '@/components/AlumniCompanies';
 import styles from './page.module.css';
 
 const prisma = new PrismaClient();
@@ -39,11 +34,25 @@ export default async function Home() {
     session?.userId ? prisma.user.findUnique({
       where: { id: session.userId },
       select: { name: true, imageUrl: true, jobRole: true, company: true, branch: true }
-    }) : Promise.resolve(null)
+    }) : Promise.resolve(null),
+    prisma.homeBanner.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
+    prisma.homeCompany.findMany({ orderBy: { order: 'asc' } }).catch(() => [])
   ]);
+
+  // Mock data if DB is empty
+  const displayBanners = recentBanners.length > 0 ? recentBanners : [
+    { id: '1', imageUrl: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070', title: 'Welcome to KEC Alumni Portal', link: '/directory' },
+    { id: '2', imageUrl: 'https://images.unsplash.com/photo-1541339907198-e08756ebafe3?q=80&w=2070', title: 'Connecting Generations of Excellence', link: '/feed' }
+  ];
+
+  const displayCompanies = recentCompanies.length > 0 ? recentCompanies : [
+    { id: 'c1', name: 'Google' }, { id: 'c2', name: 'Microsoft' }, { id: 'c3', name: 'Amazon' },
+    { id: 'c4', name: 'Adobe' }, { id: 'c5', name: 'Meta' }, { id: 'c6', name: 'Infosys' }
+  ];
 
   return (
     <div className="institutional-container">
+      <HomeCarousel banners={displayBanners} />
       <div className={styles.standardGrid}>
         
         {/* Left Column: Profile Card */}
@@ -55,7 +64,7 @@ export default async function Home() {
                 src={user?.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'K')}&background=7B61FF&color=fff`} 
                 className={styles.idAvatar} 
               />
-              <h3>{user?.name || 'Institutional Guest'}</h3>
+              <h3>{user?.name || 'Campus Guest'}</h3>
               <p>{user?.jobRole || 'Future Leader'} {user?.company ? `@ ${user.company}` : ''}</p>
               <div className={styles.idStats}>
                  <div className={styles.idStatRow}>
@@ -67,23 +76,23 @@ export default async function Home() {
                    <span className={styles.statVal}>{alumniCount}</span>
                  </div>
               </div>
-              <Link href="/dashboard" className={styles.idAction}>View My Dossier</Link>
+              <Link href="/dashboard" className={styles.idAction}>View My Profile</Link>
             </div>
           </div>
 
           <div className={styles.quickLinks}>
-             <p>Institutional Resources</p>
+             <p>Campus Resources</p>
              <Link href="/directory"><Users size={16} /> Alumni Network</Link>
              <Link href="/students"><GraduationCap size={16} /> Student Talent</Link>
              <Link href="/jobs"><Briefcase size={16} /> Job Postings</Link>
           </div>
         </aside>
 
-        {/* Center Column: Institutional Pulse Feed */}
+        {/* Center Column: Kec Community Feed */}
         <main className={styles.centerCol}>
           <section className={styles.pulseHeader}>
             <div className={styles.pulseInfo}>
-              <h2>Institutional Executive Pulse</h2>
+              <h2>Kec Feed Pulse</h2>
               <p>Real-time evolution of the BTKIT (KEC) ecosystem</p>
             </div>
           </section>
@@ -144,7 +153,7 @@ export default async function Home() {
           </section>
 
           <section className={styles.card}>
-            <div className={styles.cardTitle}><BookOpen size={18} /> Institutional Seat</div>
+            <div className={styles.cardTitle}><BookOpen size={18} /> About BTKIT</div>
             <div className={styles.seatInfo}>
                <img src="https://upload.wikimedia.org/wikipedia/en/e/e0/Bipin_Tripathi_Kumaon_Institute_of_Technology_logo.png" className={styles.seatLogo} />
                <p>Bipin Tripathi Kumaon Institute of Technology (BTKIT), Dwarahat was established in 1991 as an autonomous institution.</p>
@@ -154,6 +163,7 @@ export default async function Home() {
         </aside>
 
       </div>
+      <AlumniCompanies companies={displayCompanies} />
     </div>
   );
 }
