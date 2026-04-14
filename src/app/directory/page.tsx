@@ -32,11 +32,11 @@ export default async function DirectoryPage() {
     role: a.jobRole || 'Professional',
     skills: a.skills ? a.skills.split(',') : [],
     imageUrl: a.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(a.name)}&background=7B61FF&color=fff`,
-    bio: a.bio || 'Verified Institutional Alumni',
+    bio: a.bio || 'Verified Alumni Member',
   }));
 
   return (
-    <div className="institutional-container">
+    <div className="kec-container">
       <DirectoryClient 
         initialData={formattedAlumni} 
         iconType="alumni"

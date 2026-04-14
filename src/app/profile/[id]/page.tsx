@@ -33,11 +33,11 @@ export default async function ProfilePage({ params }: Props) {
           <div className={styles.headerInfo}>
             <div className={styles.badgeRow}>
               <span className={styles.roleBadge}>{alumni.role}</span>
-              {alumni.hostel && <span className={styles.institutionalBadge}>{alumni.hostel} Alum</span>}
+              {alumni.hostel && <span className={styles.institutionalBadge}>{alumni.hostel} KEC Alum</span>}
             </div>
             <h1 className={styles.name}>{alumni.name}</h1>
             <p className={styles.headline}>
-              {alumni.jobRole || 'Institutional Fellow'} {alumni.company ? `@ ${alumni.company}` : ''}
+              {alumni.jobRole || 'KEC Fellow'} {alumni.company ? `@ ${alumni.company}` : ''}
             </p>
             <div className={styles.metaRow}>
               <span>📍 {alumni.location || 'Dwarahat'}</span>
@@ -46,7 +46,7 @@ export default async function ProfilePage({ params }: Props) {
             </div>
           </div>
           <div className={styles.headerActions}>
-            <Link href={`/messages?to=${alumni.id}`} className="btn btn-primary">Begin Dialogue</Link>
+            <Link href={`/messages?to=${alumni.id}`} className="btn btn-primary">Send Message</Link>
           </div>
         </div>
       </header>
@@ -54,8 +54,8 @@ export default async function ProfilePage({ params }: Props) {
       <div className={styles.profileGrid}>
         <div className={styles.mainCol}>
           <section className={styles.card}>
-            <h3>Institutional Narrative</h3>
-            <p className={styles.bio}>{alumni.bio || 'This member has not yet updated their institutional narrative.'}</p>
+            <h3>Career Journey</h3>
+            <p className={styles.bio}>{alumni.bio || 'This member has not yet updated their career story.'}</p>
           </section>
 
           {(alumni.achievements || alumni.higherStudies) && (
@@ -90,11 +90,11 @@ export default async function ProfilePage({ params }: Props) {
           <section className={styles.card}>
             <h3>Academic Roots</h3>
             <div className={styles.rootItem}>
-              <label>Institutional ID</label>
+              <label>Roll Number</label>
               <span>{alumni.rollNumber || 'Not Stated'}</span>
             </div>
             <div className={styles.rootItem}>
-              <label>Hostel Residancy</label>
+              <label>Hostel Residency</label>
               <span>{alumni.hostel || 'Not Stated'}</span>
             </div>
             <div className={styles.rootItem}>
@@ -109,7 +109,7 @@ export default async function ProfilePage({ params }: Props) {
               {alumni.linkedinUrl && <a href={alumni.linkedinUrl} target="_blank" className={styles.socialLink}>LinkedIn Profile ↗</a>}
               {alumni.githubUrl && <a href={alumni.githubUrl} target="_blank" className={styles.socialLink}>GitHub Portfolio ↗</a>}
               {alumni.twitterUrl && <a href={alumni.twitterUrl} target="_blank" className={styles.socialLink}>Twitter / X ↗</a>}
-              {alumni.website && <a href={alumni.website} target="_blank" className={styles.socialLink}>Academic Portal ↗</a>}
+              {alumni.website && <a href={alumni.website} target="_blank" className={styles.socialLink}>Personal Website ↗</a>}
             </div>
           </section>
         </aside>

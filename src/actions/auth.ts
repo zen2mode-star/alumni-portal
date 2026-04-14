@@ -44,11 +44,11 @@ export async function register(formData: FormData) {
     // 1. Verify against official alumni list (VerifiedEmail)
     const verified = await prisma.verifiedEmail.findUnique({ where: { email } });
     if (!verified) {
-      return { error: 'Your email is not in the institutional database. Please contact the administrator.' };
+      return { error: 'Your email is not in the KEC database. Please contact the administrator.' };
     }
 
     if (verified.authCode !== authCode) {
-      return { error: 'Invalid Institutional Verification Code for this email.' };
+      return { error: 'Invalid KEC Verification Code for this email.' };
     }
 
     // 2. Check if user already exists

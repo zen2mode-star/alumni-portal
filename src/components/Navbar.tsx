@@ -12,36 +12,36 @@ export default async function Navbar() {
   let latestUnread: any = null;
   let latestPostTime: any = null;
 
-  if (session?.userId) {
-    const data = await Promise.all([
-      prisma.message.count({
-        where: {
-          receiverId: session.userId,
-          read: false
-        }
-      }),
-      prisma.user.findUnique({
-        where: { id: session.userId },
-        select: { name: true, imageUrl: true }
-      }),
-      prisma.message.findFirst({
-        where: {
-          receiverId: session.userId,
-          read: false
-        },
-        orderBy: { createdAt: 'desc' },
-        include: { sender: { select: { name: true } } }
-      }),
-      prisma.post.findFirst({
-        orderBy: { createdAt: 'desc' },
-        select: { createdAt: true }
-      })
-    ]);
-    unreadCount = data[0];
-    user = data[1];
-    latestUnread = data[2];
-    latestPostTime = data[3]?.createdAt?.toISOString() || null;
-  }
+  const [unreadResult, userResult, latestUnreadResult, latestPostResult, logoAsset] = await Promise.all([
+    session?.userId ? prisma.message.count({
+      where: {
+        receiverId: session.userId,
+        read: false
+      }
+    }) : Promise.resolve(0),
+    session?.userId ? prisma.user.findUnique({
+      where: { id: session.userId },
+      select: { name: true, imageUrl: true }
+    }) : Promise.resolve(null),
+    session?.userId ? prisma.message.findFirst({
+      where: {
+        receiverId: session.userId,
+        read: false
+      },
+      orderBy: { createdAt: 'desc' },
+      include: { sender: { select: { name: true } } }
+    }) : Promise.resolve(null),
+    prisma.post.findFirst({
+      orderBy: { createdAt: 'desc' },
+      select: { createdAt: true }
+    }),
+    prisma.siteAsset.findUnique({ where: { key: 'CAMPUS_LOGO' } })
+  ]);
+
+  unreadCount = unreadResult;
+  user = userResult;
+  latestUnread = latestUnreadResult;
+  latestPostTime = latestPostResult?.createdAt?.toISOString() || null;
 
   return (
     <TopNavbar 
@@ -50,6 +50,7 @@ export default async function Navbar() {
       latestUnread={latestUnread}
       isAdmin={session?.role === 'ADMIN'}
       latestPostTime={latestPostTime}
+      logoUrl={logoAsset?.url || null}
     />
   );
 }

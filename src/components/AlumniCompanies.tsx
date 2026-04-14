@@ -4,7 +4,7 @@ import styles from './AlumniCompanies.module.css';
 interface Company {
   id: string;
   name: string;
-  logoUrl?: string;
+  logoUrl?: string | null;
 }
 
 interface Props {

@@ -21,7 +21,7 @@ export async function updateProfile(formData: FormData) {
     const phone = formData.get('phone') as string;
     const website = formData.get('website') as string;
 
-    // Academic & Institutional
+    // Academic & Campus
     const branch = formData.get('branch') as string;
     const gradYearStr = formData.get('gradYear') as string;
     const gradYear = gradYearStr ? parseInt(gradYearStr) : undefined;
@@ -93,7 +93,7 @@ export async function updateProfile(formData: FormData) {
     revalidatePath('/students');
     revalidatePath(`/profile/${session.userId}`);
     
-    return { success: true, message: 'Institutional dossier synchronized successfully!' };
+    return { success: true, message: 'Profile updated successfully!' };
   } catch (error: any) {
     console.error('Profile update error:', error);
     return { error: 'Failed to synchronize expanded identity markers.' };

@@ -18,7 +18,7 @@ export default async function AdminDashboard() {
   
   if (session?.role !== 'ADMIN') redirect('/');
 
-  const [users, verifiedEmails, verifiedCount, pendingJobs] = await Promise.all([
+  const [users, verifiedEmails, verifiedCount, pendingJobs, banners, companies] = await Promise.all([
     prisma.user.findMany({ orderBy: { createdAt: 'desc' } }),
     prisma.verifiedEmail.findMany({ orderBy: { createdAt: 'desc' } }),
     prisma.verifiedEmail.count(),

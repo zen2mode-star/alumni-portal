@@ -5,8 +5,8 @@ import styles from './HomeCarousel.module.css';
 interface Banner {
   id: string;
   imageUrl: string;
-  title?: string;
-  link?: string;
+  title?: string | null;
+  link?: string | null;
 }
 
 interface Props {

@@ -14,7 +14,7 @@ interface DirectoryClientProps {
 export default function DirectoryClient({ 
   initialData, 
   title = "Verified Alumni Network", 
-  subtitle = "Institutional ledger of all approved graduates",
+  subtitle = "Official roster of all approved graduates",
   iconType = 'alumni'
 }: DirectoryClientProps) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -89,7 +89,7 @@ export default function DirectoryClient({
           {filteredData.length === 0 && (
             <div className={styles.emptyState}>
               <IconHeader size={48} className={styles.emptyIcon} />
-              <p>No verified institutional records matching your query were found.</p>
+              <p>No verified campus records matching your query were found.</p>
             </div>
           )}
         </section>

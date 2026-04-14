@@ -46,7 +46,7 @@ export default function UserApprovalList({ initialUsers }: { initialUsers: any[]
         <table className={styles.table}>
           <thead>
             <tr>
-              <th>Institutional Member</th>
+              <th>Verified Member</th>
               <th>Presence & Credential</th>
               <th>Clearance</th>
               <th>Executive Actions</th>

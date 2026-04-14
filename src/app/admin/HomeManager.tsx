@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { addBanner, deleteBanner, addHomeCompany, deleteHomeCompany } from '@/actions/home';
+import { addBanner, deleteBanner, addHomeCompany, deleteHomeCompany, updateSiteAsset } from '@/actions/home';
 import styles from './HomeManager.module.css';
 
 interface HomeManagerProps {
@@ -9,107 +9,162 @@ interface HomeManagerProps {
 }
 
 export default function HomeManager({ initialBanners, initialCompanies }: HomeManagerProps) {
-  const [banners, setBanners] = useState(initialBanners);
-  const [companies, setCompanies] = useState(initialCompanies);
+  const [activeTab, setActiveTab] = useState<'banners' | 'companies' | 'assets'>('banners');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
   async function handleAddBanner(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-    
+    setStatus(null);
+    const formData = new FormData(e.currentTarget);
     const res = await addBanner(formData);
-    if (res.error) {
-      setError(res.error);
-    } else {
-      // Optimistic update or just wait for revalidation?
-      // Since it's admin, we can just refresh or update state.
-      window.location.reload(); 
+    if (res.error) setStatus({ type: 'error', message: res.error });
+    else {
+      setStatus({ type: 'success', message: 'Banner added successfully!' });
+      e.currentTarget.reset();
+      window.location.reload();
     }
-    setLoading(false);
-  }
-
-  async function handleDeleteBanner(id: string) {
-    if (!confirm('Delete this banner?')) return;
-    setLoading(true);
-    const res = await deleteBanner(id);
-    if (res.error) setError(res.error);
-    else window.location.reload();
     setLoading(false);
   }
 
   async function handleAddCompany(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-    
+    setStatus(null);
+    const formData = new FormData(e.currentTarget);
     const res = await addHomeCompany(formData);
-    if (res.error) {
-      setError(res.error);
-    } else {
+    if (res.error) setStatus({ type: 'error', message: res.error });
+    else {
+      setStatus({ type: 'success', message: 'Company logo added!' });
+      e.currentTarget.reset();
       window.location.reload();
     }
     setLoading(false);
   }
 
-  async function handleDeleteCompany(id: string) {
-    if (!confirm('Delete this company?')) return;
+  async function handleUpdateAsset(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     setLoading(true);
-    const res = await deleteHomeCompany(id);
-    if (res.error) setError(res.error);
-    else window.location.reload();
+    setStatus(null);
+    const formData = new FormData(e.currentTarget);
+    const res = await updateSiteAsset(formData);
+    if (res.error) setStatus({ type: 'error', message: res.error });
+    else {
+      setStatus({ type: 'success', message: res.message || 'Asset updated!' });
+      e.currentTarget.reset();
+      window.location.reload();
+    }
     setLoading(false);
   }
 
   return (
-    <div className={styles.managerGrid}>
-      <section className={styles.section}>
-        <h3>Manage Home Banners</h3>
-        <form onSubmit={handleAddBanner} className={styles.form}>
-          <input name="imageUrl" placeholder="Banner Image URL" required />
-          <input name="title" placeholder="Banner Title (Optional)" />
-          <button type="submit" disabled={loading} className="btn btn-primary">
-            {loading ? 'Adding...' : 'Add Banner'}
-          </button>
-        </form>
-        {error && <p className={styles.error}>{error}</p>}
-        <div className={styles.list}>
-          {banners.map(b => (
-            <div key={b.id} className={styles.item}>
-              <img src={b.imageUrl} className={styles.preview} alt={b.title || 'Banner'} />
-              <span className={styles.itemTitle}>{b.title || 'Untitled'}</span>
-              <button onClick={() => handleDeleteBanner(b.id)} className={styles.deleteBtn}>×</button>
-            </div>
-          ))}
-        </div>
-      </section>
+    <div className={styles.managerWrapper}>
+      <div className={styles.tabs}>
+        <button className={activeTab === 'banners' ? styles.active : ''} onClick={() => setActiveTab('banners')}>Carousel Banners</button>
+        <button className={activeTab === 'companies' ? styles.active : ''} onClick={() => setActiveTab('companies')}>Alumni Companies</button>
+        <button className={activeTab === 'assets' ? styles.active : ''} onClick={() => setActiveTab('assets')}>Global Assets (Sides)</button>
+      </div>
 
-      <section className={styles.section}>
-        <h3>Alumni Companies</h3>
-        <form onSubmit={handleAddCompany} className={styles.form}>
-          <input name="name" placeholder="Company Name" required />
-          <input name="logoUrl" placeholder="Logo URL (Optional)" />
-          <button type="submit" disabled={loading} className="btn btn-primary">
-            {loading ? 'Adding...' : 'Add Company'}
-          </button>
-        </form>
-        <div className={styles.list}>
-          {companies.map(c => (
-            <div key={c.id} className={styles.item}>
-               <div className={styles.companyInfo}>
-                 {c.logoUrl && <img src={c.logoUrl} className={styles.miniLogo} alt={c.name} />}
-                 <span>{c.name}</span>
-               </div>
-               <button onClick={() => handleDeleteCompany(c.id)} className={styles.deleteBtn}>×</button>
-            </div>
-          ))}
+      {status && (
+        <div className={`${styles.status} ${status.type === 'success' ? styles.success : styles.error}`}>
+          {status.message}
         </div>
-      </section>
+      )}
+
+      {activeTab === 'banners' && (
+        <section className={styles.section}>
+          <h3>Add Carousel Slide</h3>
+          <form onSubmit={handleAddBanner} className={styles.form}>
+            <div className={styles.inputGroup}>
+              <label>Select Banner Image</label>
+              <input type="file" name="bannerImage" accept="image/*" required />
+            </div>
+            <div className={styles.inputGroup}>
+              <label>Headline (Optional)</label>
+              <input type="text" name="title" placeholder="e.g. Welcome to KEC" />
+            </div>
+            <button type="submit" disabled={loading} className="btn btn-primary">
+              {loading ? 'Uploading...' : 'Add Slide'}
+            </button>
+          </form>
+          <div className={styles.list}>
+            {initialBanners.map(b => (
+              <div key={b.id} className={styles.item}>
+                <img src={b.imageUrl} className={styles.preview} alt="" />
+                <span>{b.title || 'Untitled'}</span>
+                <button onClick={async () => {
+                   if(confirm('Remove?')) {
+                     setLoading(true);
+                     await deleteBanner(b.id);
+                     window.location.reload();
+                   }
+                }} className={styles.deleteBtn}>×</button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {activeTab === 'companies' && (
+        <section className={styles.section}>
+          <h3>Add Alumni Company</h3>
+          <form onSubmit={handleAddCompany} className={styles.form}>
+            <div className={styles.inputGroup}>
+              <label>Select Logo Image</label>
+              <input type="file" name="logoImage" accept="image/*" />
+            </div>
+            <div className={styles.inputGroup}>
+              <label>Company Name</label>
+              <input type="text" name="name" required placeholder="e.g. Google" />
+            </div>
+            <button type="submit" disabled={loading} className="btn btn-primary">
+              {loading ? 'Uploading...' : 'Add Company'}
+            </button>
+          </form>
+          <div className={styles.list}>
+            {initialCompanies.map(c => (
+              <div key={c.id} className={styles.item}>
+                <div className={styles.companyInfo}>
+                  {c.logoUrl && <img src={c.logoUrl} className={styles.miniLogo} alt="" />}
+                  <span>{c.name}</span>
+                </div>
+                <button onClick={async () => {
+                   if(confirm('Remove?')) {
+                     setLoading(true);
+                     await deleteHomeCompany(c.id);
+                     window.location.reload();
+                   }
+                }} className={styles.deleteBtn}>×</button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {activeTab === 'assets' && (
+        <section className={styles.section}>
+          <h3>Update Global Site Assets</h3>
+          <p className={styles.hint}>Upload images to replace specific site-wide elements.</p>
+          
+          <div className={styles.assetGrid}>
+            {[
+              { key: 'CAMPUS_LOGO', label: 'Main KEC Logo' },
+              { key: 'SIDEBAR_CAMPUS_IMAGE', label: 'Sidebar About Image' },
+              { key: 'DEFAULT_COVER', label: 'Default Profile Cover' },
+            ].map(asset => (
+              <form key={asset.key} onSubmit={handleUpdateAsset} className={styles.assetForm}>
+                <input type="hidden" name="key" value={asset.key} />
+                <label className={styles.assetLabel}>{asset.label}</label>
+                <div className={styles.assetActions}>
+                   <input type="file" name="assetImage" accept="image/*" required />
+                   <button type="submit" disabled={loading} className="btn btn-glass">Update</button>
+                </div>
+              </form>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

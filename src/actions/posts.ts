@@ -10,7 +10,7 @@ const prisma = new PrismaClient();
 export async function createPost(formData: FormData) {
   try {
     const session = await verifySession();
-    if (!session) return { error: 'Not authenticated. Institutional signature required.' };
+    if (!session) return { error: 'Not authenticated. Campus verification required.' };
 
     const content = formData.get('content') as string;
     if (!content || content.trim().length === 0) {
@@ -30,7 +30,7 @@ export async function createPost(formData: FormData) {
       try {
         imageUrl = await uploadImage(imageFile, 'posts');
       } catch (e) {
-        return { error: 'Failed to upload institutional media.' };
+        return { error: 'Failed to upload campus media.' };
       }
     }
 
@@ -46,10 +46,10 @@ export async function createPost(formData: FormData) {
 
     revalidatePath('/feed');
     revalidatePath('/');
-    return { success: true, message: 'Institutional update published with media!' };
+    return { success: true, message: 'Campus update published!' };
   } catch (error) {
     console.error('Post creation error:', error);
-    return { error: 'Failed to publish institutional update.' };
+    return { error: 'Failed to publish campus update.' };
   }
 }
 
@@ -62,14 +62,14 @@ export async function deletePost(postId: string) {
     if (!post) return { error: 'Update not found.' };
 
     if (post.authorId !== session.userId && session.role !== 'ADMIN') {
-      return { error: 'Unauthorized to removal this institutional update.' };
+      return { error: 'Unauthorized to remove this update.' };
     }
 
     await prisma.post.delete({ where: { id: postId } });
 
     revalidatePath('/feed');
     revalidatePath('/');
-    return { success: true, message: 'Update removed from institutional ledger.' };
+    return { success: true, message: 'Update removed from network.' };
   } catch (error) {
     return { error: 'Failed to remove update.' };
   }

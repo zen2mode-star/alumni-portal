@@ -28,7 +28,7 @@ export default function AlumniCard({ alumni }: Props) {
         
         {alumni.isStudent ? (
           <div className={styles.roleLine}>
-            <span className={styles.studentBadge}>Emerging Institutional Talent</span>
+            <span className={styles.studentBadge}>Emerging KEC Talent</span>
           </div>
         ) : (
           <div className={styles.roleLine}>

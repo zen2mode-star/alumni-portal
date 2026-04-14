@@ -65,7 +65,7 @@ export default function InterestTracker({ jobId, isInterested, interestCount, in
 
       {isAuthor && interestedUsers && interestedUsers.length > 0 && (
         <div className={styles.posterInsights}>
-          <h4>Interested Institutional Talent:</h4>
+          <h4>Interested KEC Talent:</h4>
           <ul className={styles.talentList}>
             {interestedUsers.map((u, i) => (
               <li key={i}>{u.name}</li>

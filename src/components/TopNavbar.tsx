@@ -25,9 +25,10 @@ interface Props {
   latestUnread: any;
   isAdmin: boolean;
   latestPostTime?: string | null;
+  logoUrl?: string | null;
 }
 
-export default function TopNavbar({ user, unreadCount, isAdmin, latestPostTime }: Props) {
+export default function TopNavbar({ user, unreadCount, isAdmin, latestPostTime, logoUrl }: Props) {
   const [isMeOpen, setIsMeOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hasNewPosts, setHasNewPosts] = useState(false);
@@ -64,7 +65,7 @@ export default function TopNavbar({ user, unreadCount, isAdmin, latestPostTime }
         {/* Left: Brand & Search */}
         <div className={styles.left}>
           <Link href="/" className={styles.logo}>
-            <img src="/btkit-logo.png" alt="BTKIT" className={styles.kecLogo} />
+            <img src={logoUrl || "/btkit-logo.png"} alt="BTKIT" className={styles.kecLogo} />
             <span className={styles.brandName}>KecAlumni<span className={styles.brandDot}>.in</span></span>
           </Link>
           <div className={styles.searchWrapper}>

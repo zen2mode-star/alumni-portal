@@ -36,7 +36,7 @@ export default async function StudentsPage() {
   }));
 
   return (
-    <div className="institutional-container">
+    <div className="kec-container">
       <DirectoryClient 
         initialData={formattedStudents} 
         title="Emerging Student Talent"

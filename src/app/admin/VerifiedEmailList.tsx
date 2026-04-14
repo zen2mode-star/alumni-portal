@@ -25,7 +25,7 @@ export default function VerifiedEmailList({ initialEmails }: { initialEmails: an
   return (
     <div className={styles.verifiedEmails}>
       <header className={styles.sectionHeader}>
-        <h2>Institutional Member Whitelist</h2>
+        <h2>Official Member Whitelist</h2>
         <button onClick={() => setShowAdd(!showAdd)} className={styles.addBtn}>
           {showAdd ? 'Cancel' : '➕ Add Individual Member'}
         </button>

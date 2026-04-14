@@ -13,7 +13,7 @@ const prisma = new PrismaClient();
 export default async function Home() {
   const session = await verifySession();
   
-  const [alumniCount, studentCount, recentAlumni, recentStudents, recentJobs, user] = await Promise.all([
+  const [alumniCount, studentCount, recentAlumni, recentStudents, recentJobs, user, recentBanners, recentCompanies, assets] = await Promise.all([
     prisma.verifiedEmail.count(),
     prisma.user.count({ where: { role: 'STUDENT', status: 'APPROVED' } }),
     prisma.user.findMany({
@@ -36,8 +36,11 @@ export default async function Home() {
       select: { name: true, imageUrl: true, jobRole: true, company: true, branch: true }
     }) : Promise.resolve(null),
     prisma.homeBanner.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
-    prisma.homeCompany.findMany({ orderBy: { order: 'asc' } }).catch(() => [])
+    prisma.homeCompany.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
+    prisma.siteAsset.findMany().catch(() => [])
   ]);
+
+  const assetMap = Object.fromEntries(assets.map(a => [a.key, a.url]));
 
   // Mock data if DB is empty
   const displayBanners = recentBanners.length > 0 ? recentBanners : [
@@ -51,14 +54,17 @@ export default async function Home() {
   ];
 
   return (
-    <div className="institutional-container">
+    <div className="kec-container">
       <HomeCarousel banners={displayBanners} />
       <div className={styles.standardGrid}>
         
         {/* Left Column: Profile Card */}
         <aside className={styles.leftCol}>
           <div className={styles.identityCard}>
-            <div className={styles.coverBg}></div>
+            <div 
+              className={styles.coverBg} 
+              style={assetMap.DEFAULT_COVER ? { backgroundImage: `url(${assetMap.DEFAULT_COVER})` } : {}}
+            ></div>
             <div className={styles.idContent}>
               <img 
                 src={user?.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'K')}&background=7B61FF&color=fff`} 
@@ -155,7 +161,11 @@ export default async function Home() {
           <section className={styles.card}>
             <div className={styles.cardTitle}><BookOpen size={18} /> About BTKIT</div>
             <div className={styles.seatInfo}>
-               <img src="https://upload.wikimedia.org/wikipedia/en/e/e0/Bipin_Tripathi_Kumaon_Institute_of_Technology_logo.png" className={styles.seatLogo} />
+               <img 
+                 src={assetMap.SIDEBAR_CAMPUS_IMAGE || assetMap.CAMPUS_LOGO || "https://upload.wikimedia.org/wikipedia/en/e/e0/Bipin_Tripathi_Kumaon_Institute_of_Technology_logo.png"} 
+                 className={styles.seatLogo} 
+                 alt="Campus"
+               />
                <p>Bipin Tripathi Kumaon Institute of Technology (BTKIT), Dwarahat was established in 1991 as an autonomous institution.</p>
                <div className={styles.statBadge}>Legacy since 1991</div>
             </div>

@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -125,4 +126,11 @@ model HomeCompany {
   logoUrl   String?
   order     Int      @default(0)
   createdAt DateTime @default(now())
+}
+
+model SiteAsset {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  url       String
+  updatedAt DateTime @updatedAt
 }

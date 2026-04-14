@@ -24,7 +24,7 @@ export default async function JobsPage() {
   ]);
 
   return (
-    <div className="institutional-container">
+    <div className="kec-container">
       <div className={styles.standardGrid}>
         
         {/* Left Sidebar: Actions & Context */}
@@ -52,7 +52,7 @@ export default async function JobsPage() {
 
           <div className={styles.infoCard}>
              <Info size={16} />
-             <p>All opportunities are verified by institutional alumni.</p>
+             <p>All opportunities are verified by KEC alumni.</p>
           </div>
         </aside>
 
@@ -63,7 +63,7 @@ export default async function JobsPage() {
                <Briefcase size={32} className={styles.headerIcon} />
                <div>
                   <h1>KEC Career Pathways</h1>
-                  <p>Verified professional opportunities from the institutional heritage</p>
+                  <p>Verified professional opportunities from the KEC heritage</p>
                </div>
             </div>
           </header>
@@ -84,7 +84,7 @@ export default async function JobsPage() {
 
                 return (
                   <div key={job.id} className={styles.jobCard}>
-                    <div className={styles.cardIndicator}>INSTITUTIONAL OPPORTUNITY</div>
+                    <div className={styles.cardIndicator}>KEC OPPORTUNITY</div>
                     <div className={styles.cardMain}>
                       <div className={styles.jobInfo}>
                         <h2 className={styles.jobTitle}>{job.title}</h2>

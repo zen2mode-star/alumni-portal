@@ -40,7 +40,7 @@ export default function RegisterPage() {
           </div>
 
           <div className={styles.formGroup}>
-            <label>Institutional Verification Code</label>
+            <label>KEC Verification Code</label>
             <input type="text" name="authCode" required placeholder="e.g. A9B2X (5-digits)" maxLength={5} />
           </div>
           

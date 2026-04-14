@@ -17,7 +17,7 @@ export default function PostCard({ post, currentUserId, isAdmin }: PostProps) {
   const router = useRouter();
 
   async function handleDelete() {
-    if (confirm('Permanently remove this institutional update?')) {
+    if (confirm('Permanently remove this update?')) {
       const res = await deletePost(post.id);
       if (res?.error) {
         alert(res.error);
@@ -45,7 +45,7 @@ export default function PostCard({ post, currentUserId, isAdmin }: PostProps) {
           />
           <div className={styles.authorInfo}>
             <div className={styles.nameRow}>
-               <span className={styles.name}>{post.author.name}</span>
+               <span className={styles.studentBadge}>Emerging KEC Talent</span>
                <span className={styles.roleBadge}>{post.roleSnap}</span>
             </div>
             <span className={styles.meta}>{post.author.branch} • {timeAgo}</span>
@@ -68,7 +68,7 @@ export default function PostCard({ post, currentUserId, isAdmin }: PostProps) {
 
       <footer className={styles.footer}>
         <div className={styles.institutionalSeal}>
-           BTKIT Institutional Verified 🏛
+           KEC Verified 🏛
         </div>
         {!isAuthor && (
           <Link href={`/messages?to=${post.authorId}`} className={styles.messageLink}>
