@@ -37,6 +37,7 @@ export async function register(formData: FormData) {
     const password = formData.get('password')?.toString();
     const name = formData.get('name')?.toString();
     const role = formData.get('role')?.toString();
+    const authCode = formData.get('authCode')?.toString();
     if (!email || !password || !name || !role) return { error: 'Required fields are missing.' };
 
     const config = await prisma.siteConfig.findUnique({ where: { key: 'OPEN_REGISTRATION' } });
