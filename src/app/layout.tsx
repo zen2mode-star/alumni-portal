@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/ThemeContext";
 import AutoRefresh from "@/components/AutoRefresh";
 import "./globals.css";
-import KecAI from '@/components/KecAI';
+
 
 const prisma = new PrismaClient();
 
@@ -38,7 +38,7 @@ export default async function RootLayout({
             <Navbar />
             <main className="main-content">
               {children}
-              <KecAI />
+
             </main>
           </div>
         </ThemeProvider>

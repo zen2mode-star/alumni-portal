@@ -53,7 +53,7 @@ export default function MemoryUpload() {
                 
                 <div className={styles.inputGroup}>
                   <label>Select Batch Year</label>
-                  <input type="number" name="year" placeholder="e.g. 2012" required min="1991" max={new Date().getFullYear()} />
+                  <input type="number" name="year" placeholder="e.g. 2012" required min="1992" max="2024" />
                 </div>
 
                 <div className={styles.inputGroup}>

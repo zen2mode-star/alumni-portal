@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function getNetworkContext() {
-  const [alumni, students] = await Promise.all([
+  const [alumni, students, jobs, photos] = await Promise.all([
     prisma.user.findMany({
       where: { role: 'ALUMNI', status: 'APPROVED' },
       select: { name: true, branch: true, company: true, jobRole: true, gradYear: true }
@@ -12,16 +12,25 @@ async function getNetworkContext() {
     prisma.user.findMany({
       where: { role: 'STUDENT', status: 'APPROVED' },
       select: { name: true, branch: true, gradYear: true }
-    })
+    }),
+    prisma.job.count({ where: { status: 'APPROVED' } }),
+    prisma.legacyPhoto.count({ where: { status: 'APPROVED' } })
   ]);
 
-  const topCompanies = Array.from(new Set(alumni.map(a => a.company).filter(Boolean))).slice(0, 10);
+  const topCompanies = Array.from(new Set(alumni.map(a => a.company).filter(Boolean))).slice(0, 15);
+  
+  // Branch breakdown
+  const branches: Record<string, number> = {};
+  alumni.forEach(a => {
+    if (a.branch) branches[a.branch] = (branches[a.branch] || 0) + 1;
+  });
 
   return {
-    summary: `We have ${alumni.length} verified alumni and ${students.length} students.`,
+    summary: `We have ${alumni.length} verified alumni, ${students.length} students, ${jobs} active job listings, and ${photos} legacy memories.`,
     alumni: alumni.map(a => `${a.name} (${a.branch}, ${a.gradYear}) works at ${a.company || 'Unknown'} as ${a.jobRole || 'Professional'}`),
     students: students.map(s => `${s.name} (${s.branch}, Class of ${s.gradYear})`),
-    topCompanies: topCompanies.join(', ')
+    topCompanies: topCompanies.join(', '),
+    branchBreakdown: Object.entries(branches).map(([b, c]) => `${b}: ${c}`).join(', ')
   };
 }
 
@@ -34,20 +43,25 @@ export async function askKecAI(query: string) {
     
     const systemPrompt = `
       You are KecAI, the official AI assistant for the KEC Alumni Portal (KecAlumni.in).
-      Your goal is to help students and alumni connect and learn about the institutional network.
-      
-      CONTEXT OF THE NETWORK:
+      KEC refers to Bipin Tripathi Kumaon Institute of Technology (BTKIT), Dwarahat, Almora, Uttarakhand. 
+      It was established in 1986 and is a premium engineering institution in the Himalayas.
+
+      YOUR MISSION:
+      Help students and alumni connect. Guide them to resources like jobs, the directory, and legacy wall.
+
+      PORTAL ANALYTICS:
       - ${context.summary}
-      - Top Companies: ${context.topCompanies}
-      - Notable Alumni: ${context.alumni.slice(0, 50).join('; ')}
-      - Notable Students: ${context.students.slice(0, 30).join('; ')}
+      - Branch Strength (Alumni): ${context.branchBreakdown}
+      - Top Companies in our Network: ${context.topCompanies}
+      - Featured Alumni Highlights: ${context.alumni.slice(0, 40).join('; ')}
       
-      RULES:
-      1. Be professional, helpful, and institutional.
-      2. If asked about a company, check the alumni list and mention anyone working there.
-      3. Do NOT disclose private info like emails or phone numbers.
-      4. If you don't know something about the specific network data, say you are still learning about that specific batch/member.
-      5. Always refer to the college as "KEC" or "BTKIT Dwarahat".
+      BEHAVIORAL RULES:
+      1. Be extremely helpful, proud of KEC heritage, and professional.
+      2. If asked about jobs, mention there are ${context.summary.split(', ')[2]} listings and encourage checking the Job Board.
+      3. If asked about specific people, verify them in the context. If not found, say you are still gathering details for that batch.
+      4. DO NOT reveal private contact info.
+      5. Encourage alumni to share memories on the Legacy Wall (currently ${context.summary.split(', ')[3]}).
+      6. Use the term "KECians" or "BTKITians" warmly.
     `;
 
     console.log('KecAI: Sending request with query:', query);

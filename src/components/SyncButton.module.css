@@ -1,28 +1,29 @@
 .syncBtn {
   position: relative;
-  background: rgba(123, 97, 255, 0.08);
-  border: 1px solid rgba(123, 97, 255, 0.3);
-  color: var(--primary-color);
-  padding: 0.4rem 1rem;
-  border-radius: 8px;
+  background: linear-gradient(135deg, #7B61FF 0%, #5B3FE0 100%);
+  border: none;
+  color: #fff;
+  padding: 0.45rem 1.1rem;
+  border-radius: 20px;
   font-weight: 700;
   font-size: 0.75rem;
   cursor: pointer;
   overflow: hidden;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   min-width: 110px;
   min-height: 34px;
   flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(123, 97, 255, 0.35);
+  letter-spacing: 0.02em;
 }
 
 .syncBtn:hover:not(:disabled) {
-  background: var(--primary-color);
-  color: white;
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-glow);
+  background: linear-gradient(135deg, #8F76FF 0%, #6B50F0 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(123, 97, 255, 0.55);
 }
 
 .syncBtn:disabled { cursor: wait; opacity: 0.7; }

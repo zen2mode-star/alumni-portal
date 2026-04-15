@@ -189,7 +189,7 @@ export default function DashboardClient({ user, pendingMessages }: DashboardProp
                     <input type="checkbox" name="canMentor" defaultChecked={user.canMentor} style={{ width: '18px', height: '18px' }} />
                     <div>
                       <strong style={{ display: 'block', fontSize: '0.9rem', color: '#fff' }}>Open to 15-Min Mentorship</strong>
-                      <span style={{ fontSize: '0.75rem', color: var(--text-secondary) }}>Allow students to request quick career guidance chats.</span>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Allow students to request quick career guidance chats.</span>
                     </div>
                   </label>
                 </div>

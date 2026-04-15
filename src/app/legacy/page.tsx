@@ -11,7 +11,9 @@ export default async function LegacyWall({ searchParams }: { searchParams: Promi
   const resolvedParams = await searchParams;
   const selectedYear = resolvedParams.year ? parseInt(resolvedParams.year) : null;
 
-  const [alumni, photos, years] = await Promise.all([
+  const years = Array.from({ length: 2024 - 1992 + 1 }, (_, i) => ({ gradYear: 2024 - i }));
+
+  const [alumni, photos] = await Promise.all([
     prisma.user.findMany({
       where: { 
         role: 'ALUMNI', 
@@ -20,14 +22,7 @@ export default async function LegacyWall({ searchParams }: { searchParams: Promi
       },
       orderBy: [{ gradYear: 'desc' }, { name: 'asc' }],
     }),
-    getLegacyPhotos(selectedYear || undefined),
-    // Get distinct years for the timeline
-    prisma.user.findMany({
-      where: { role: 'ALUMNI', status: 'APPROVED' },
-      select: { gradYear: true },
-      distinct: ['gradYear'],
-      orderBy: { gradYear: 'desc' }
-    })
+    getLegacyPhotos(selectedYear || undefined)
   ]);
 
   const formattedAlumni = alumni.map(a => ({
