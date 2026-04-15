@@ -37,17 +37,19 @@ export async function register(formData: FormData) {
     const password = formData.get('password')?.toString();
     const name = formData.get('name')?.toString();
     const role = formData.get('role')?.toString();
-    const authCode = formData.get('authCode')?.toString();
+    if (!email || !password || !name || !role) return { error: 'Required fields are missing.' };
 
-    if (!email || !password || !name || !role || !authCode) return { error: 'All fields are required' };
+    const config = await prisma.siteConfig.findUnique({ where: { key: 'OPEN_REGISTRATION' } });
+    const isOpen = config?.value === 'TRUE';
 
     // 1. Verify against official alumni list (VerifiedEmail)
     const verified = await prisma.verifiedEmail.findUnique({ where: { email } });
-    if (!verified) {
-      return { error: 'Your email is not in the KEC database. Please contact the administrator.' };
+    
+    if (!verified && !isOpen) {
+      return { error: 'Your email is not in the KEC database. Please contact the administrator or wait for Open Registration.' };
     }
 
-    if (verified.authCode !== authCode) {
+    if (verified && verified.authCode !== authCode) {
       return { error: 'Invalid KEC Verification Code for this email.' };
     }
 
@@ -58,16 +60,19 @@ export async function register(formData: FormData) {
     const hashedPassword = await bcrypt.hash(password, 10);
     
     // 3. Create user (forced to PENDING for admin approval)
+    const userRole = verified ? verified.role : role; // Use verified role if available, otherwise user-chosen role
+    const userName = verified?.name || name;
+
     const user = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
-        name: verified.name || name, // Prefer institutional name
-        role,
+        name: userName,
+        role: userRole,
         status: 'PENDING',
-        startYear: verified.startYear,
-        gradYear: verified.gradYear,
-        imageUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(verified.name || name)}&background=7B61FF&color=fff`,
+        startYear: verified?.startYear,
+        gradYear: verified?.gradYear,
+        imageUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=7B61FF&color=fff`,
       }
     });
 

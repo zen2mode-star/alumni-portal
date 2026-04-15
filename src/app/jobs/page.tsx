@@ -4,6 +4,7 @@ import { verifySession } from '@/lib/session';
 import Link from 'next/link';
 import { Briefcase, Plus, TrendingUp, Info } from 'lucide-react';
 import InterestTracker from './InterestTracker';
+import JobCarousel from '@/components/JobCarousel';
 import styles from './page.module.css';
 
 const prisma = new PrismaClient();
@@ -16,6 +17,7 @@ export default async function JobsPage() {
       where: { status: 'APPROVED' },
       include: { 
         author: { select: { name: true } },
+        images: true, // Fetch related images
         interests: { include: { user: { select: { name: true } } } }
       },
       orderBy: { createdAt: 'desc' }
@@ -89,6 +91,13 @@ export default async function JobsPage() {
                       <div className={styles.jobInfo}>
                         <h2 className={styles.jobTitle}>{job.title}</h2>
                         <h3 className={styles.companyName}>{job.company}</h3>
+                        
+                        {job.images && job.images.length > 0 && (
+                          <div style={{ marginBottom: '1.5rem', borderRadius: '12px', overflow: 'hidden' }}>
+                            <JobCarousel imageUrls={job.images.map(img => img.url)} />
+                          </div>
+                        )}
+
                         <p className={styles.jobDesc}>{job.description}</p>
                         
                         {job.link && (

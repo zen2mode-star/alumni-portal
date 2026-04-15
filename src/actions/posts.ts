@@ -34,13 +34,14 @@ export async function createPost(formData: FormData) {
       }
     }
 
-    // Role snapshot ensures the post stays in the correct tab even if user upgrades role later
+       // Role snapshot ensures the post stays in the correct tab even if user upgrades role later
     await prisma.post.create({
       data: {
         content,
         imageUrl,
         authorId: session.userId,
-        roleSnap: session.role
+        roleSnap: session.role,
+        status: session.role === 'STAFF' ? 'PENDING' : 'APPROVED'
       }
     });
 
@@ -72,5 +73,34 @@ export async function deletePost(postId: string) {
     return { success: true, message: 'Update removed from network.' };
   } catch (error) {
     return { error: 'Failed to remove update.' };
+  }
+}
+
+export async function approvePost(postId: string) {
+  try {
+    const session = await verifySession();
+    if (session?.role !== 'ADMIN') return { error: 'Unauthorized.' };
+    await prisma.post.update({
+      where: { id: postId },
+      data: { status: 'APPROVED' }
+    });
+    revalidatePath('/feed');
+    revalidatePath('/admin');
+    return { success: true, message: 'Campus update approved!' };
+  } catch (error) {
+    return { error: 'Failed to approve update.' };
+  }
+}
+
+export async function rejectPost(postId: string) {
+  try {
+    const session = await verifySession();
+    if (session?.role !== 'ADMIN') return { error: 'Unauthorized.' };
+    await prisma.post.delete({ where: { id: postId } });
+    revalidatePath('/feed');
+    revalidatePath('/admin');
+    return { success: true, message: 'Campus update rejected.' };
+  } catch (error) {
+    return { error: 'Failed to reject update.' };
   }
 }

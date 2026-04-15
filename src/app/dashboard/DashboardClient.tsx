@@ -4,6 +4,7 @@ import { updateProfile } from '@/actions/profile';
 import { changePassword, logout } from '@/actions/auth';
 import Link from 'next/link';
 import LittleTiger from '@/components/LittleTiger';
+import DigitalID from '@/components/DigitalID';
 import styles from './page.module.css';
 
 interface DashboardProps {
@@ -184,6 +185,15 @@ export default function DashboardClient({ user, pendingMessages }: DashboardProp
                    </div>
                 </div>
                 <div className={styles.inputGroup}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', background: 'rgba(123, 97, 255, 0.1)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(123, 97, 255, 0.2)' }}>
+                    <input type="checkbox" name="canMentor" defaultChecked={user.canMentor} style={{ width: '18px', height: '18px' }} />
+                    <div>
+                      <strong style={{ display: 'block', fontSize: '0.9rem', color: '#fff' }}>Open to 15-Min Mentorship</strong>
+                      <span style={{ fontSize: '0.75rem', color: var(--text-secondary) }}>Allow students to request quick career guidance chats.</span>
+                    </div>
+                  </label>
+                </div>
+                <div className={styles.inputGroup}>
                   <label>Accolades & Achievements</label>
                   <textarea name="achievements" defaultValue={user.achievements || ''} placeholder="List honors, awards, and milestones..." />
                 </div>
@@ -195,6 +205,11 @@ export default function DashboardClient({ user, pendingMessages }: DashboardProp
         </section>
 
         <aside className={styles.controlPanel}>
+          <div style={{ marginBottom: '2rem' }}>
+            <h3 style={{ marginBottom: '1rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Institutional Dossier</h3>
+            <DigitalID user={user} />
+          </div>
+
           <div className={styles.glassCard}>
             <h3>Account Security</h3>
             <form onSubmit={handlePasswordChange} className={styles.modernForm}>

@@ -80,17 +80,25 @@ export default async function MessagesPage({ searchParams }: { searchParams: Pro
     }}>
       {/* Page header bar */}
       <div style={{
-        padding: '1rem 2rem',
+        padding: '1.2rem 2rem',
         background: 'var(--card-bg)',
         borderBottom: '1px solid var(--card-border)',
         flexShrink: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.2rem'
       }}>
-        <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.15rem' }}>
-          🔒 Secure Network Dialogue
+        <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          🔒 Secured Network
         </h1>
-        <p style={{ fontSize: '0.7rem', color: 'var(--primary-color)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-          End-to-End Encrypted · BTKIT Graduates Only
-        </p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <p style={{ fontSize: '0.75rem', color: 'var(--primary-color)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            Network Messages
+          </p>
+          <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#ffffff' }}>
+            KecAlumni.in
+          </span>
+        </div>
       </div>
 
       {/* Main chat grid */}

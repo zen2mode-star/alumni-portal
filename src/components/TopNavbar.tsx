@@ -13,7 +13,9 @@ import {
   Settings,
   LogOut,
   Menu,
-  X
+  X,
+  UserCheck,
+  History
 } from 'lucide-react';
 import { logout } from '@/actions/auth';
 import ThemeToggle from './ThemeToggle';
@@ -53,7 +55,9 @@ export default function TopNavbar({ user, unreadCount, isAdmin, latestPostTime, 
   const navItems = [
     { label: 'Home', icon: Home, href: '/' },
     { label: 'Alumni Network', icon: Users, href: '/directory' },
+    { label: 'KEC Staff', icon: UserCheck, href: '/staff' },
     { label: 'Undergrad Network', icon: GraduationCap, href: '/students' },
+    { label: 'Legacy Wall', icon: History, href: '/legacy' },
     { label: 'Careers', icon: Briefcase, href: '/jobs' },
     { label: 'Messages', icon: MessageSquare, href: '/messages', badge: unreadCount },
     { label: 'Kec Feed', icon: Bell, href: '/feed' },

@@ -3,9 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -34,6 +33,9 @@ model User {
   githubUrl        String?
   twitterUrl       String?
   instagramUrl     String?
+  canMentor        Boolean       @default(false)
+  isSpotlight      Boolean       @default(false)
+  spotlightBio     String?
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
   authoredEvents   Event[]
@@ -42,6 +44,7 @@ model User {
   receivedMessages Message[]     @relation("ReceivedMessages")
   sentMessages     Message[]     @relation("SentMessages")
   posts            Post[]
+  legacyPhotos     LegacyPhoto[]
 }
 
 model Post {
@@ -50,6 +53,7 @@ model Post {
   imageUrl  String?
   authorId  String
   roleSnap  String
+  status    String   @default("APPROVED")
   createdAt DateTime @default(now())
   author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
 }
@@ -73,11 +77,19 @@ model Job {
   company     String
   description String
   link        String?
+  images      JobImage[]
   authorId    String
   status      String        @default("PENDING")
   createdAt   DateTime      @default(now())
   author      User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
   interests   JobInterest[]
+}
+
+model JobImage {
+  id    String @id @default(cuid())
+  url   String
+  jobId String
+  job   Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
 }
 
 model JobInterest {
@@ -97,6 +109,7 @@ model Event {
   date        DateTime
   description String
   authorId    String
+  status      String   @default("APPROVED")
   createdAt   DateTime @default(now())
   author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
 }
@@ -105,6 +118,7 @@ model VerifiedEmail {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String?
+  role      String   @default("ALUMNI") // ALUMNI or STAFF
   authCode  String?  @unique
   startYear Int?
   gradYear  Int?
@@ -122,10 +136,19 @@ model HomeBanner {
 
 model HomeCompany {
   id        String   @id @default(cuid())
-  name      String
+  name      String   @unique
   logoUrl   String?
   order     Int      @default(0)
   createdAt DateTime @default(now())
+}
+
+model Notice {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  designation String   @default("Administration")
+  priority    String   @default("NORMAL")
+  createdAt   DateTime @default(now())
 }
 
 model SiteAsset {
@@ -133,4 +156,22 @@ model SiteAsset {
   key       String   @unique
   url       String
   updatedAt DateTime @updatedAt
+}
+
+model SiteConfig {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model LegacyPhoto {
+  id        String   @id @default(cuid())
+  imageUrl  String
+  caption   String?
+  year      Int
+  status    String   @default("PENDING")
+  authorId  String
+  createdAt DateTime @default(now())
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
 }

@@ -1,0 +1,170 @@
+.settingsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.glassCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.sectionHeader h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.description {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.toggleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.statusInfo {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.statusLabel {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #fff;
+}
+
+.toggleBtn {
+  padding: 0.8rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btnOpen {
+  background: #f59e0b;
+  color: #000;
+}
+
+.btnClosed {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.toggleBtn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.feedback {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.success { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+.error { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+.photoQueue {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.photoItem {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.photoInfo {
+  flex: 1;
+}
+
+.photoInfo strong {
+  display: block;
+  color: #fff;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.photoInfo p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0 0 0.4rem 0;
+}
+
+.photoInfo span {
+  font-size: 0.75rem;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.photoActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.photoActions button {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.approve { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+.reject { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+.photoActions button:hover {
+  transform: scale(1.1);
+}
+
+.empty {
+  color: var(--text-secondary);
+  text-align: center;
+  font-style: italic;
+  font-size: 0.9rem;
+}

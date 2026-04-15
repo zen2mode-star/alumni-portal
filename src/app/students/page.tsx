@@ -1,7 +1,9 @@
 export const dynamic = 'force-dynamic';
+import { Suspense } from 'react';
 import { PrismaClient } from '@prisma/client';
 import { GraduationCap } from 'lucide-react';
 import DirectoryClient from '../directory/DirectoryClient';
+import StaffVoices from '@/components/StaffVoices';
 
 const prisma = new PrismaClient();
 
@@ -22,6 +24,14 @@ export default async function StudentsPage() {
     }
   });
 
+  const staffMessages = await prisma.notice.findMany({
+    where: {
+      designation: { in: ['Director', 'Principal', 'Registrar', 'Vice Principal', 'Dean Academics', 'Alumni Cell'] }
+    },
+    orderBy: { createdAt: 'desc' },
+    take: 3
+  });
+
   const formattedStudents = students.map(s => ({
     id: s.id,
     name: s.name,
@@ -37,12 +47,15 @@ export default async function StudentsPage() {
 
   return (
     <div className="kec-container">
-      <DirectoryClient 
-        initialData={formattedStudents} 
-        title="Emerging Student Talent"
-        subtitle="Institutional roster of currently enrolled technocrats"
-        iconType="student"
-      />
+      <StaffVoices messages={staffMessages} />
+      <Suspense fallback={<div>Loading Talent Roster...</div>}>
+        <DirectoryClient 
+          initialData={formattedStudents} 
+          title="Emerging Student Talent"
+          subtitle="Institutional roster of currently enrolled technocrats"
+          iconType="student"
+        />
+      </Suspense>
     </div>
   );
 }

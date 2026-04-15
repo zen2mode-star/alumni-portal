@@ -6,41 +6,54 @@ import styles from './HomeManager.module.css';
 interface HomeManagerProps {
   initialBanners: any[];
   initialCompanies: any[];
+  profileCompanies: string[];
 }
 
-export default function HomeManager({ initialBanners, initialCompanies }: HomeManagerProps) {
+export default function HomeManager({ initialBanners, initialCompanies, profileCompanies }: HomeManagerProps) {
   const [activeTab, setActiveTab] = useState<'banners' | 'companies' | 'assets'>('banners');
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+  const [companyName, setCompanyName] = useState('');
 
   async function handleAddBanner(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setStatus(null);
-    const formData = new FormData(e.currentTarget);
-    const res = await addBanner(formData);
-    if (res.error) setStatus({ type: 'error', message: res.error });
-    else {
-      setStatus({ type: 'success', message: 'Banner added successfully!' });
-      e.currentTarget.reset();
-      window.location.reload();
+    try {
+      const formData = new FormData(e.currentTarget);
+      const res = await addBanner(formData);
+      if (res.error) setStatus({ type: 'error', message: res.error });
+      else {
+        setStatus({ type: 'success', message: 'Banner added successfully!' });
+        e.currentTarget.reset();
+        window.location.reload();
+      }
+    } catch (err) {
+      setStatus({ type: 'error', message: 'A network error occurred.' });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   async function handleAddCompany(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setStatus(null);
-    const formData = new FormData(e.currentTarget);
-    const res = await addHomeCompany(formData);
-    if (res.error) setStatus({ type: 'error', message: res.error });
-    else {
-      setStatus({ type: 'success', message: 'Company logo added!' });
-      e.currentTarget.reset();
-      window.location.reload();
+    try {
+      const formData = new FormData(e.currentTarget);
+      const res = await addHomeCompany(formData);
+      if (res.error) setStatus({ type: 'error', message: res.error });
+      else {
+        setStatus({ type: 'success', message: 'Company logo updated/added!' });
+        setCompanyName('');
+        e.currentTarget.reset();
+        window.location.reload();
+      }
+    } catch (err) {
+      setStatus({ type: 'error', message: 'A network error occurred.' });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   async function handleUpdateAsset(e: React.FormEvent<HTMLFormElement>) {
@@ -48,12 +61,23 @@ export default function HomeManager({ initialBanners, initialCompanies }: HomeMa
     setLoading(true);
     setStatus(null);
     const formData = new FormData(e.currentTarget);
+    const key = formData.get('key') as string;
+    
+    // Find friendly label
+    const labels: Record<string, string> = {
+      'CAMPUS_LOGO': 'Main KEC Logo',
+      'SIDEBAR_CAMPUS_IMAGE': 'Sidebar About Image',
+      'DEFAULT_COVER': 'Default Profile Cover'
+    };
+    const friendlyName = labels[key] || key;
+
     const res = await updateSiteAsset(formData);
     if (res.error) setStatus({ type: 'error', message: res.error });
     else {
-      setStatus({ type: 'success', message: res.message || 'Asset updated!' });
+      setStatus({ type: 'success', message: `Successfully updated "${friendlyName}"!` });
       e.currentTarget.reset();
-      window.location.reload();
+      // Optional: don't reload immediately to let user see the message
+      setTimeout(() => window.location.reload(), 1500);
     }
     setLoading(false);
   }
@@ -74,27 +98,38 @@ export default function HomeManager({ initialBanners, initialCompanies }: HomeMa
 
       {activeTab === 'banners' && (
         <section className={styles.section}>
-          <h3>Add Carousel Slide</h3>
-          <form onSubmit={handleAddBanner} className={styles.form}>
-            <div className={styles.inputGroup}>
-              <label>Select Banner Image</label>
-              <input type="file" name="bannerImage" accept="image/*" required />
+          <div className={styles.infoBox}>
+            <strong>📸 Sidebar Gallery Slideshow</strong>
+            <p>These images appear as an auto-rotating slideshow in the <strong>right sidebar</strong> of the Home page. You can upload up to <strong>10 images</strong>. Currently: <strong>{initialBanners.length} / 10</strong> slides.</p>
+          </div>
+          <h3>Add Gallery Slide</h3>
+          {initialBanners.length >= 10 ? (
+            <div className={styles.infoBox} style={{ borderColor: '#ef4444' }}>
+              <strong style={{ color: '#ef4444' }}>Maximum Reached</strong>
+              <p>You have reached the 10-slide limit. Delete an existing slide to add a new one.</p>
             </div>
-            <div className={styles.inputGroup}>
-              <label>Headline (Optional)</label>
-              <input type="text" name="title" placeholder="e.g. Welcome to KEC" />
-            </div>
-            <button type="submit" disabled={loading} className="btn btn-primary">
-              {loading ? 'Uploading...' : 'Add Slide'}
-            </button>
-          </form>
+          ) : (
+            <form onSubmit={handleAddBanner} className={styles.form}>
+              <div className={styles.inputGroup}>
+                <label>Select Image</label>
+                <input type="file" name="bannerImage" accept="image/*" required />
+              </div>
+              <div className={styles.inputGroup}>
+                <label>Caption (Optional)</label>
+                <input type="text" name="title" placeholder="e.g. Annual Day 2025" />
+              </div>
+              <button type="submit" disabled={loading} className="btn btn-primary">
+                {loading ? 'Uploading...' : 'Add Slide'}
+              </button>
+            </form>
+          )}
           <div className={styles.list}>
-            {initialBanners.map(b => (
+            {initialBanners.map((b, i) => (
               <div key={b.id} className={styles.item}>
                 <img src={b.imageUrl} className={styles.preview} alt="" />
-                <span>{b.title || 'Untitled'}</span>
+                <span>#{i + 1} — {b.title || 'Untitled'}</span>
                 <button onClick={async () => {
-                   if(confirm('Remove?')) {
+                   if(confirm('Remove this slide?')) {
                      setLoading(true);
                      await deleteBanner(b.id);
                      window.location.reload();
@@ -116,8 +151,34 @@ export default function HomeManager({ initialBanners, initialCompanies }: HomeMa
             </div>
             <div className={styles.inputGroup}>
               <label>Company Name</label>
-              <input type="text" name="name" required placeholder="e.g. Google" />
+              <input 
+                type="text" 
+                name="name" 
+                required 
+                placeholder="e.g. Google" 
+                value={companyName} 
+                onChange={(e) => setCompanyName(e.target.value)}
+              />
             </div>
+            
+            {profileCompanies.length > 0 && (
+              <div className={styles.pickerSection}>
+                <label className={styles.pickerLabel}>Found in Alumni Profiles (Quick Add):</label>
+                <div className={styles.pickerTags}>
+                  {profileCompanies.map(name => (
+                    <button 
+                      key={name} 
+                      type="button" 
+                      className={styles.pickerTag}
+                      onClick={() => setCompanyName(name)}
+                    >
+                      {name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <button type="submit" disabled={loading} className="btn btn-primary">
               {loading ? 'Uploading...' : 'Add Company'}
             </button>
@@ -129,13 +190,25 @@ export default function HomeManager({ initialBanners, initialCompanies }: HomeMa
                   {c.logoUrl && <img src={c.logoUrl} className={styles.miniLogo} alt="" />}
                   <span>{c.name}</span>
                 </div>
-                <button onClick={async () => {
-                   if(confirm('Remove?')) {
-                     setLoading(true);
-                     await deleteHomeCompany(c.id);
-                     window.location.reload();
-                   }
-                }} className={styles.deleteBtn}>×</button>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button 
+                    onClick={() => {
+                      setCompanyName(c.name);
+                      document.querySelector('input[name="name"]')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className={styles.editBtn}
+                    title="Edit/Update logo"
+                  >
+                    ✎
+                  </button>
+                  <button onClick={async () => {
+                     if(confirm('Remove?')) {
+                       setLoading(true);
+                       await deleteHomeCompany(c.id);
+                       window.location.reload();
+                     }
+                  }} className={styles.deleteBtn}>×</button>
+                </div>
               </div>
             ))}
           </div>

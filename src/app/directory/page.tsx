@@ -1,6 +1,8 @@
 export const dynamic = 'force-dynamic';
+import { Suspense } from 'react';
 import { PrismaClient } from '@prisma/client';
 import DirectoryClient from './DirectoryClient';
+import StaffVoices from '@/components/StaffVoices';
 
 const prisma = new PrismaClient();
 
@@ -23,6 +25,14 @@ export default async function DirectoryPage() {
     }
   });
 
+  const staffMessages = await prisma.notice.findMany({
+    where: {
+      designation: { in: ['Director', 'Principal', 'Registrar', 'Vice Principal', 'Dean Academics', 'Alumni Cell'] }
+    },
+    orderBy: { createdAt: 'desc' },
+    take: 3
+  });
+
   const formattedAlumni = alumni.map(a => ({
     id: a.id,
     name: a.name,
@@ -37,10 +47,13 @@ export default async function DirectoryPage() {
 
   return (
     <div className="kec-container">
-      <DirectoryClient 
-        initialData={formattedAlumni} 
-        iconType="alumni"
-      />
+      <StaffVoices messages={staffMessages} />
+      <Suspense fallback={<div>Loading Directory...</div>}>
+        <DirectoryClient 
+          initialData={formattedAlumni} 
+          iconType="alumni"
+        />
+      </Suspense>
     </div>
   );
 }

@@ -33,6 +33,12 @@ export default function AdminJobPost() {
         </div>
         <textarea name="description" placeholder="Job Description & Requirements" required />
         <input name="link" placeholder="External Application Link (Optional)" />
+        <div style={{ marginBottom: '1rem' }}>
+          <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>
+            Unlimited Job Photos (Slideshow)
+          </label>
+          <input type="file" name="images" multiple accept="image/*" style={{ fontSize: '0.8rem' }} />
+        </div>
         <button type="submit" disabled={loading} className="btn btn-primary">
           {loading ? 'Posting...' : 'Post Job Directly'}
         </button>

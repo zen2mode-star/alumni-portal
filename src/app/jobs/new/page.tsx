@@ -38,6 +38,11 @@ export default async function NewJobPage() {
             <label>External Application Link (Optional)</label>
             <input type="url" name="link" placeholder="https://careers.company.com/..." />
           </div>
+
+           <div className={styles.formGroup}>
+            <label>Unlimited Job Photos / Slideshow Images</label>
+            <input type="file" name="images" multiple accept="image/*" />
+          </div>
           
           <button type="submit" className={styles.submitBtn}>Post Job</button>
         </form>

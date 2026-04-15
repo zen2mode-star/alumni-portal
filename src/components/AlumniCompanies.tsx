@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import styles from './AlumniCompanies.module.css';
 
 interface Company {
@@ -21,13 +22,17 @@ export default function AlumniCompanies({ companies }: Props) {
         <div className={styles.scrollTrack}>
           {/* Double the list for infinite scroll effect */}
           {[...companies, ...companies].map((company, index) => (
-            <div key={`${company.id}-${index}`} className={styles.companyBadge}>
+            <Link 
+              href={`/directory?company=${encodeURIComponent(company.name)}`} 
+              key={`${company.id}-${index}`} 
+              className={styles.companyBadge}
+            >
               {company.logoUrl ? (
                 <img src={company.logoUrl} alt={company.name} className={styles.logo} />
               ) : (
                 <span className={styles.companyName}>{company.name}</span>
               )}
-            </div>
+            </Link>
           ))}
         </div>
       </div>

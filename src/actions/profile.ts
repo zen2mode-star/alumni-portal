@@ -37,6 +37,7 @@ export async function updateProfile(formData: FormData) {
 
     // Professional Accomplishments
     const achievements = formData.get('achievements') as string;
+    const canMentor = formData.get('canMentor') === 'on';
     
     // Image Handling
     const imageFile = formData.get('profileImage') as File;
@@ -82,6 +83,7 @@ export async function updateProfile(formData: FormData) {
         githubUrl: githubUrl || undefined,
         twitterUrl: twitterUrl || undefined,
         instagramUrl: instagramUrl || undefined,
+        canMentor,
         
         updatedAt: new Date()
       }

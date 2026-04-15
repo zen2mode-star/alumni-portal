@@ -1,112 +1,190 @@
 'use server';
 
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
 import { verifySession } from '@/lib/session';
 import { revalidatePath } from 'next/cache';
-import { parse } from 'csv-parse/sync';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-async function checkAdmin() {
-  const session = await verifySession();
-  if (!session || session.role !== 'ADMIN') {
-    throw new Error('Unauthorized access');
+export async function getOpenRegistrationStatus() {
+  const config = await prisma.siteConfig.findUnique({
+    where: { key: 'OPEN_REGISTRATION' }
+  });
+  return config?.value === 'TRUE';
+}
+
+export async function toggleOpenRegistration(enabled: boolean) {
+  try {
+    const session = await verifySession();
+    if (!session || session.role !== 'ADMIN') return { error: 'Unauthorized' };
+
+    await prisma.siteConfig.upsert({
+      where: { key: 'OPEN_REGISTRATION' },
+      update: { value: enabled ? 'TRUE' : 'FALSE' },
+      create: { key: 'OPEN_REGISTRATION', value: enabled ? 'TRUE' : 'FALSE' }
+    });
+
+    revalidatePath('/admin');
+    revalidatePath('/register');
+    return { success: true, message: `Registration is now ${enabled ? 'OPEN' : 'CLOSED'}` };
+  } catch (err) {
+    return { error: 'Failed to update site configuration.' };
   }
-  return session;
+}
+
+export async function getPendingLegacyPhotos() {
+  try {
+    const session = await verifySession();
+    if (!session || session.role !== 'ADMIN') return [];
+
+    return await prisma.legacyPhoto.findMany({
+      where: { status: 'PENDING' },
+      include: { author: { select: { name: true } } },
+      orderBy: { createdAt: 'desc' }
+    });
+  } catch (err) {
+    return [];
+  }
+}
+
+export async function handleLegacyPhoto(id: string, action: 'APPROVE' | 'REJECT') {
+  try {
+    const session = await verifySession();
+    if (!session || session.role !== 'ADMIN') return { error: 'Unauthorized' };
+
+    if (action === 'APPROVE') {
+      await prisma.legacyPhoto.update({
+        where: { id },
+        data: { status: 'APPROVED' }
+      });
+    } else {
+      await prisma.legacyPhoto.delete({
+        where: { id }
+      });
+    }
+
+    revalidatePath('/admin');
+    revalidatePath('/legacy');
+    return { success: true };
+  } catch (err) {
+    return { error: 'Action failed.' };
+  }
+}
+
+export async function addVerifiedEmail(data: { name: string, email: string, startYear: number, gradYear: number }) {
+  try {
+    const session = await verifySession();
+    if (!session || session.role !== 'ADMIN') return { error: 'Unauthorized' };
+
+    await prisma.verifiedEmail.create({
+      data: {
+        name: data.name,
+        email: data.email,
+        startYear: data.startYear,
+        gradYear: data.gradYear
+      }
+    });
+
+    revalidatePath('/admin');
+    return { success: true };
+  } catch (err) {
+    return { error: 'Failed to add member.' };
+  }
 }
 
 export async function toggleUserApproval(userId: string, status: string) {
   try {
-    await checkAdmin();
+    const session = await verifySession();
+    if (!session || session.role !== 'ADMIN') return { error: 'Unauthorized' };
+
     await prisma.user.update({
       where: { id: userId },
       data: { status }
     });
+
     revalidatePath('/admin');
     return { success: true };
-  } catch (error) {
-    return { error: 'Failed to update user status' };
+  } catch (err) {
+    return { error: 'Failed to update user status.' };
   }
 }
 
-export async function resetUserPassword(userId: string, newPassword: string) {
+export async function resetUserPassword(userId: string, newPass: string) {
   try {
-    await checkAdmin();
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const session = await verifySession();
+    if (!session || session.role !== 'ADMIN') return { error: 'Unauthorized' };
+
+    const hashedPassword = await bcrypt.hash(newPass, 10);
     await prisma.user.update({
       where: { id: userId },
       data: { password: hashedPassword }
     });
-    return { success: true, message: 'Password reset successfully' };
-  } catch (error) {
-    return { error: 'Failed to reset password' };
+
+    return { success: true };
+  } catch (err) {
+    return { error: 'Failed to reset password.' };
   }
 }
 
 export async function deleteUser(userId: string) {
   try {
-    await checkAdmin();
-    await prisma.user.delete({ where: { id: userId } });
+    const session = await verifySession();
+    if (!session || session.role !== 'ADMIN') return { error: 'Unauthorized' };
+
+    await prisma.user.delete({
+      where: { id: userId }
+    });
+
     revalidatePath('/admin');
     return { success: true };
-  } catch (error) {
-    return { error: 'Failed to delete user' };
+  } catch (err) {
+    return { error: 'Failed to delete user.' };
   }
 }
 
-export async function addVerifiedEmail(data: { email: string, name: string, startYear: number, gradYear: number }) {
+export async function getAlumniCompanies() {
   try {
-    await checkAdmin();
-    await prisma.verifiedEmail.upsert({
-      where: { email: data.email },
-      update: data,
-      create: data
+    const alumni = await prisma.user.findMany({
+      where: { role: 'ALUMNI', status: 'APPROVED' },
+      select: { company: true }
     });
-    revalidatePath('/admin');
-    return { success: true };
-  } catch (error) {
-    return { error: 'Failed to save verified email' };
+    
+    const companies = Array.from(new Set(alumni.map(a => a.company).filter(Boolean)));
+    return companies as string[];
+  } catch (err) {
+    return [];
   }
 }
 
 export async function uploadVerifiedEmails(formData: FormData) {
   try {
-    await checkAdmin();
+    const session = await verifySession();
+    if (!session || session.role !== 'ADMIN') return { error: 'Unauthorized' };
+
     const file = formData.get('csvFile') as File;
     if (!file) return { error: 'No file uploaded' };
 
     const text = await file.text();
-    // Expecting: Name,Email,StartYear,GradYear,AuthCode
-    const records = parse(text, {
-      columns: true,
-      skip_empty_lines: true,
-      trim: true
-    });
+    const rows = text.split('\n').slice(1); // Skip header
+    let count = 0;
 
-    for (const record of (records as any[])) {
-      await prisma.verifiedEmail.upsert({
-        where: { email: record.Email },
-        update: {
-          name: record.Name,
-          authCode: record.AuthCode || null,
-          startYear: parseInt(record.StartYear) || null,
-          gradYear: parseInt(record.GradYear) || null
-        },
-        create: {
-          email: record.Email,
-          name: record.Name,
-          authCode: record.AuthCode || null,
-          startYear: parseInt(record.StartYear) || null,
-          gradYear: parseInt(record.GradYear) || null
-        }
-      });
+    for (const row of rows) {
+      const [name, email, startYear, gradYear] = row.split(',').map(s => s?.trim());
+      if (email && name) {
+        await prisma.verifiedEmail.upsert({
+          where: { email },
+          update: { name, startYear: parseInt(startYear), gradYear: parseInt(gradYear) },
+          create: { name, email, startYear: parseInt(startYear), gradYear: parseInt(gradYear) }
+        });
+        count++;
+      }
     }
 
     revalidatePath('/admin');
-    return { success: true, count: records.length };
-  } catch (error) {
-    console.error('CSV error:', error);
-    return { error: 'Failed to process CSV file. Ensure columns are: Name,Email,StartYear,GradYear,AuthCode' };
+    return { success: true, count };
+  } catch (err) {
+    console.error('Upload error:', err);
+    return { error: 'Failed to upload CSV.' };
   }
 }

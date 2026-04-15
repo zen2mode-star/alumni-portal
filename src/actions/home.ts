@@ -19,10 +19,16 @@ export async function addBanner(formData: FormData) {
       return { error: 'Please select an image file.' };
     }
 
+    // Enforce max 10 banners
+    const existingCount = await prisma.homeBanner.count();
+    if (existingCount >= 10) {
+      return { error: 'Maximum 10 slides allowed. Delete an existing slide first.' };
+    }
+
     const imageUrl = await uploadImage(imageFile, 'banners');
 
     await prisma.homeBanner.create({
-      data: { imageUrl, title, order: 0 }
+      data: { imageUrl, title, order: existingCount }
     });
 
     revalidatePath('/');
@@ -61,8 +67,13 @@ export async function addHomeCompany(formData: FormData) {
       logoUrl = await uploadImage(logoFile, 'companies');
     }
 
-    await prisma.homeCompany.create({
-      data: { name, logoUrl, order: 0 }
+    // Upsert by name to allow "updating" logos easily
+    await prisma.homeCompany.upsert({
+      where: { name },
+      update: { 
+        ...(logoUrl && { logoUrl }) 
+      },
+      create: { name, logoUrl, order: 0 }
     });
 
     revalidatePath('/');
@@ -70,7 +81,7 @@ export async function addHomeCompany(formData: FormData) {
     return { success: true };
   } catch (err) {
     console.error('Add Company Error:', err);
-    return { error: 'Failed to add company' };
+    return { error: 'Failed to add/update company' };
   }
 }
 
@@ -133,3 +144,47 @@ export async function checkNewContent(lastPostTime: string | null, lastJobTime: 
     return { hasUpdate: false };
   }
 }
+
+// ===== Notice Board Actions =====
+
+export async function addNotice(formData: FormData) {
+  try {
+    const session = await verifySession();
+    if (session?.role !== 'ADMIN') return { error: 'Unauthorized' };
+
+    const title = formData.get('title') as string;
+    const content = formData.get('content') as string;
+    const designation = formData.get('designation') as string || 'Administration';
+    const priority = formData.get('priority') as string || 'NORMAL';
+
+    if (!title || !content) {
+      return { error: 'Title and content are required.' };
+    }
+
+    await prisma.notice.create({
+      data: { title, content, designation, priority }
+    });
+
+    revalidatePath('/');
+    revalidatePath('/admin');
+    return { success: true };
+  } catch (err) {
+    console.error('Add Notice Error:', err);
+    return { error: 'Failed to create notice' };
+  }
+}
+
+export async function deleteNotice(id: string) {
+  try {
+    const session = await verifySession();
+    if (session?.role !== 'ADMIN') return { error: 'Unauthorized' };
+
+    await prisma.notice.delete({ where: { id } });
+    revalidatePath('/');
+    revalidatePath('/admin');
+    return { success: true };
+  } catch (err) {
+    return { error: 'Failed to delete notice' };
+  }
+}
+

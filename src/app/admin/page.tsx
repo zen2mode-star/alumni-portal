@@ -7,8 +7,13 @@ import VerifiedEmailList from './VerifiedEmailList';
 import UserApprovalList from './UserApprovalList';
 import OutreachCenter from './OutreachCenter';
 import JobApprovalPanel from './JobApprovalPanel';
+import UpdateApprovalPanel from './UpdateApprovalPanel';
 import HomeManager from './HomeManager';
+import NoticeManager from './NoticeManager';
 import AdminJobPost from './AdminJobPost';
+import CollapsibleList from './CollapsibleList';
+import SiteSettings from '@/components/SiteSettings';
+import { getAlumniCompanies, getOpenRegistrationStatus, getPendingLegacyPhotos } from '@/actions/admin';
 import styles from './page.module.css';
 
 const prisma = new PrismaClient();
@@ -18,7 +23,7 @@ export default async function AdminDashboard() {
   
   if (session?.role !== 'ADMIN') redirect('/');
 
-  const [users, verifiedEmails, verifiedCount, pendingJobs, banners, companies] = await Promise.all([
+  const [users, verifiedEmails, verifiedCount, pendingJobs, pendingPosts, banners, companies, notices, alumniCompanies, openStatus, pendingPhotos] = await Promise.all([
     prisma.user.findMany({ orderBy: { createdAt: 'desc' } }),
     prisma.verifiedEmail.findMany({ orderBy: { createdAt: 'desc' } }),
     prisma.verifiedEmail.count(),
@@ -27,8 +32,17 @@ export default async function AdminDashboard() {
       include: { author: { select: { name: true } } },
       orderBy: { createdAt: 'desc' }
     }),
+    prisma.post.findMany({
+      where: { status: 'PENDING' },
+      include: { author: { select: { name: true } } },
+      orderBy: { createdAt: 'desc' }
+    }),
     prisma.homeBanner.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
-    prisma.homeCompany.findMany({ orderBy: { order: 'asc' } }).catch(() => [])
+    prisma.homeCompany.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
+    prisma.notice.findMany({ orderBy: { createdAt: 'desc' } }).catch(() => []),
+    getAlumniCompanies(),
+    getOpenRegistrationStatus(),
+    getPendingLegacyPhotos()
   ]);
 
   const registeredEmails = new Set(users.map(u => u.email));
@@ -56,28 +70,45 @@ export default async function AdminDashboard() {
             </span>
             <span className={styles.statLabel}>Jobs Awaiting Review</span>
           </div>
+          <div className={styles.statCard}>
+            <span className={styles.statVal} style={{ color: pendingPosts.length > 0 ? '#f59e0b' : 'inherit' }}>
+              {pendingPosts.length}
+            </span>
+            <span className={styles.statLabel}>Updates Awaiting Review</span>
+          </div>
         </div>
       </header>
 
       <div className={styles.contentGrid}>
         <div className={styles.leftCol}>
           <section className={styles.section}>
-            <h2>Manage Access Whitelist</h2>
+            <h2>Site Governance & Toggle</h2>
+            <SiteSettings initialOpenStatus={openStatus} pendingPhotos={pendingPhotos} />
+          </section>
+
+          <section className={styles.section} style={{ marginTop: '1.5rem' }}>
+            <h2>Whitelist Management</h2>
             <CSVUploader />
-            <OutreachCenter unregisteredVerified={unregisteredVerified} />
-            <br />
-            <VerifiedEmailList initialEmails={verifiedEmails} />
+            <div style={{ marginTop: '1.5rem' }}>
+              <CollapsibleList title="CSV Whitelist Database" count={verifiedEmails.length}>
+                <VerifiedEmailList initialEmails={verifiedEmails} />
+              </CollapsibleList>
+              <OutreachCenter unregisteredVerified={unregisteredVerified} />
+            </div>
           </section>
 
           <section className={styles.section} style={{ marginTop: '1.5rem' }}>
             <h2>Home Page Content</h2>
-            <HomeManager initialBanners={banners} initialCompanies={companies} />
+            <HomeManager initialBanners={banners} initialCompanies={companies} profileCompanies={alumniCompanies} />
+            <NoticeManager initialNotices={notices} />
           </section>
         </div>
 
         <div className={styles.rightCol}>
           <section className={styles.section}>
-            <UserApprovalList initialUsers={users} />
+            <CollapsibleList title="Registered Member Directory" count={users.length}>
+              <UserApprovalList initialUsers={users} />
+            </CollapsibleList>
           </section>
 
           {/* Job Approval Section */}
@@ -94,6 +125,21 @@ export default async function AdminDashboard() {
               )}
             </h2>
             <JobApprovalPanel initialJobs={pendingJobs} />
+          </section>
+
+          <section className={styles.section} style={{ marginTop: '1.5rem' }}>
+            <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              Update Approvals
+              {pendingPosts.length > 0 && (
+                <span style={{
+                  background: '#7B61FF', color: 'white', borderRadius: '20px',
+                  fontSize: '0.7rem', padding: '0.15rem 0.6rem', fontWeight: 700
+                }}>
+                  {pendingPosts.length} pending
+                </span>
+              )}
+            </h2>
+            <UpdateApprovalPanel initialPosts={pendingPosts} />
           </section>
 
           <section className={styles.section} style={{ marginTop: '1.5rem' }}>

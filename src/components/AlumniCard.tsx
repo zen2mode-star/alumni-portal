@@ -42,10 +42,10 @@ export default function AlumniCard({ alumni }: Props) {
 
         <div className={styles.actions}>
           <Link href={`/messages?to=${alumni.id}`} className={styles.primeBtn}>
-            Begin Dialogue
+            Message
           </Link>
           <Link href={`/profile/${alumni.id}`} className={styles.secBtn}>
-            Biography
+            View Profile
           </Link>
         </div>
       </div>

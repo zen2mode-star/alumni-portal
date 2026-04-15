@@ -4,6 +4,12 @@
   min-height: 100vh;
 }
 
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem 1rem;
+  }
+}
+
 .dashboardHeader {
   display: flex;
   justify-content: space-between;
@@ -20,6 +26,12 @@
   letter-spacing: -0.03em;
 }
 
+@media (max-width: 768px) {
+  .headerTitle h1 {
+    font-size: 1.75rem;
+  }
+}
+
 .headerTitle p {
   color: var(--accent-color);
   font-weight: 700;
@@ -31,6 +43,24 @@
 .statsRow {
   display: flex;
   gap: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .dashboardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2rem;
+  }
+  .statsRow {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    gap: 1rem;
+  }
+  .statCard {
+    flex-shrink: 0;
+    padding: 1rem 1.5rem;
+  }
 }
 
 .statCard {

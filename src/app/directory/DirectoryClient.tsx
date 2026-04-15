@@ -1,5 +1,6 @@
 "use client";
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import AlumniCard from '@/components/AlumniCard';
 import { Search, Filter, Users, GraduationCap } from 'lucide-react';
 import styles from './page.module.css';
@@ -17,8 +18,16 @@ export default function DirectoryClient({
   subtitle = "Official roster of all approved graduates",
   iconType = 'alumni'
 }: DirectoryClientProps) {
+  const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedBranch, setSelectedBranch] = useState('');
+
+  useEffect(() => {
+    const company = searchParams.get('company');
+    if (company) {
+      setSearchTerm(company);
+    }
+  }, [searchParams]);
 
   const IconHeader = iconType === 'student' ? GraduationCap : Users;
 
@@ -60,8 +69,7 @@ export default function DirectoryClient({
         </div>
 
         <div className={styles.adCard}>
-           <img src="/btkit-logo.png" className={styles.idLogo} />
-           <p>Connecting the BTKIT legacy generations through a unified digital dossier.</p>
+            <p>Connecting the BTKIT legacy generations through a unified digital directory.</p>
         </div>
       </aside>
 

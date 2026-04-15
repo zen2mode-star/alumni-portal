@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client';
 import { verifySession } from '@/lib/session';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { uploadImage } from '@/lib/cloudinary';
 
 const prisma = new PrismaClient();
 
@@ -17,12 +18,26 @@ export async function createJob(formData: FormData) {
     const description = formData.get('description') as string;
     const link = formData.get('link') as string;
 
+    // Handle multiple images (Refactored for JobImage relation)
+    const files = formData.getAll('images') as File[];
+    const imageData = [];
+
+    for (const file of files) {
+      if (file.size > 0) {
+        const url = await uploadImage(file, 'jobs');
+        imageData.push({ url });
+      }
+    }
+
     await prisma.job.create({
       data: {
         title,
         company,
         description,
         link,
+        images: {
+          create: imageData
+        },
         authorId: session.userId,
         status: session.role === 'ADMIN' ? 'APPROVED' : 'PENDING',
       }
@@ -132,12 +147,26 @@ export async function adminCreateJob(formData: FormData) {
     const description = formData.get('description') as string;
     const link = formData.get('link') as string;
 
+    // Handle multiple images (Refactored for JobImage relation)
+    const files = formData.getAll('images') as File[];
+    const imageData = [];
+
+    for (const file of files) {
+      if (file.size > 0) {
+        const url = await uploadImage(file, 'jobs');
+        imageData.push({ url });
+      }
+    }
+
     await prisma.job.create({
       data: {
         title,
         company,
         description,
         link,
+        images: {
+          create: imageData
+        },
         authorId: session.userId,
         status: 'APPROVED',
       }

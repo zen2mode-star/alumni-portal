@@ -26,15 +26,20 @@ export default function FeedClient({ alumniPosts, studentPosts, user, isAdmin }:
     setError(null);
     const form = e.currentTarget;
     const formData = new FormData(form);
-    const res = await createPost(formData);
-    setLoading(false);
-    if (res.error) {
-      setError(res.error);
-    } else {
-      form.reset();
-      setImagePreview(null);
-      // Force refresh to show the newest post immediately
-      router.refresh();
+    try {
+      const res = await createPost(formData);
+      if (res.error) {
+        setError(res.error);
+      } else {
+        form.reset();
+        setImagePreview(null);
+        // Force refresh to show the newest post immediately
+        router.refresh();
+      }
+    } catch (err) {
+      setError('A connection error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
   }
 

@@ -15,67 +15,103 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-size: cover;
-  background-position: center;
   opacity: 0;
-  transition: opacity 1s ease-in-out, transform 8s linear;
+  transition: opacity 1s ease-in-out;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.slide.active {
+.active {
   opacity: 1;
-  transform: scale(1.05);
 }
 
-.caption {
-  text-align: center;
-  color: white;
-  z-index: 2;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(8px);
-  padding: 2rem 3rem;
-  border-radius: 20px;
-  max-width: 80%;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.6);
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 4rem 2rem;
+  background: linear-gradient(transparent, rgba(0,0,0,0.8));
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.content {
+  max-width: 800px;
   animation: fadeInUp 0.8s ease-out;
 }
 
-.caption h2 {
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
+.eventBadge {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  background: var(--accent-glow);
+  color: var(--primary-color);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--primary-color);
+  border-radius: 99px;
+  font-size: 0.75rem;
   font-weight: 800;
-  letter-spacing: -1px;
-  background: linear-gradient(135deg, #fff 0%, #aaa 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.actionBtn {
+  display: inline-flex;
+  padding: 0.8rem 2rem;
+  background: var(--primary-color);
+  color: #fff;
+  border-radius: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.actionBtn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
 }
 
 .indicators {
   position: absolute;
   bottom: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%);
+  right: 2rem;
   display: flex;
-  gap: 0.8rem;
-  z-index: 10;
+  gap: 0.5rem;
 }
 
 .dot {
   width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.3);
   border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s;
 }
 
 .activeDot {
-  background: #7B61FF;
-  width: 30px;
-  border-radius: 10px;
+  width: 24px;
+  background: var(--primary-color);
 }
 
 @keyframes fadeInUp {

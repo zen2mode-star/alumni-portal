@@ -21,6 +21,28 @@
 .title { font-size: 1.75rem; margin-bottom: 0.35rem; letter-spacing: -0.03em; z-index: 1; position: relative; font-weight: 800; }
 .subtitle { color: var(--primary-color); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.75rem; z-index: 1; position: relative; }
 
+.headerBranding {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  z-index: 1;
+  position: relative;
+}
+
+.brandingMain {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--primary-color);
+  letter-spacing: -0.02em;
+}
+
+.brandingSub {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ffffff;
+  opacity: 0.9;
+}
+
 .chatContainer {
   display: grid;
   grid-template-columns: 320px 1fr;

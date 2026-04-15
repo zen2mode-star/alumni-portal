@@ -2,10 +2,14 @@ export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { PrismaClient } from '@prisma/client';
 import { verifySession } from '@/lib/session';
-import { Award, BookOpen, Briefcase, GraduationCap, Plus, Users, Image as ImageIcon } from 'lucide-react';
+import { Award, BookOpen, Briefcase, GraduationCap, Plus, Users, Image as ImageIcon, Sparkles, TrendingUp, Calendar, Megaphone, Building2 } from 'lucide-react';
+import CommunitySlider from '@/components/CommunitySlider';
 import SyncButton from '@/components/SyncButton';
-import HomeCarousel from '@/components/HomeCarousel';
+import SidebarSlideshow from '@/components/SidebarSlideshow';
 import AlumniCompanies from '@/components/AlumniCompanies';
+import CampusPulse from '@/components/CampusPulse';
+import AlumniSpotlight from '@/components/AlumniSpotlight';
+import CareerInfographic from '@/components/CareerInfographic';
 import styles from './page.module.css';
 
 const prisma = new PrismaClient();
@@ -13,7 +17,7 @@ const prisma = new PrismaClient();
 export default async function Home() {
   const session = await verifySession();
   
-  const [alumniCount, studentCount, recentAlumni, recentStudents, recentJobs, user, recentBanners, recentCompanies, assets] = await Promise.all([
+  const [alumniCount, studentCount, recentAlumni, recentStudents, campusJobs, user, recentBanners, recentCompanies, recentPosts, recentEvents, assets, notices, spotlight, companyStats] = await Promise.all([
     prisma.verifiedEmail.count(),
     prisma.user.count({ where: { role: 'STUDENT', status: 'APPROVED' } }),
     prisma.user.findMany({
@@ -26,10 +30,12 @@ export default async function Home() {
       orderBy: { createdAt: 'desc' },
       take: 5
     }),
+    // Only fetch admin-posted campus jobs (not regular alumni/student job posts)
     prisma.job.findMany({
+      where: { status: 'APPROVED', author: { role: 'ADMIN' } },
+      include: { author: { select: { name: true, role: true } } },
       orderBy: { createdAt: 'desc' },
-      take: 5,
-      include: { author: true }
+      take: 6
     }),
     session?.userId ? prisma.user.findUnique({
       where: { id: session.userId },
@@ -37,12 +43,37 @@ export default async function Home() {
     }) : Promise.resolve(null),
     prisma.homeBanner.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
     prisma.homeCompany.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
-    prisma.siteAsset.findMany().catch(() => [])
+    prisma.post.findMany({ 
+      where: { status: 'APPROVED' }, 
+      include: { author: { select: { name: true, role: true, imageUrl: true, company: true } } },
+      orderBy: { createdAt: 'desc' },
+      take: 4
+    }).catch(() => []),
+    prisma.event.findMany({
+      where: { status: 'APPROVED' },
+      include: { author: { select: { name: true } } },
+      orderBy: { date: 'asc' },
+      take: 3
+    }).catch(() => []),
+    prisma.siteAsset.findMany().catch(() => []),
+    prisma.notice.findMany({ orderBy: { createdAt: 'desc' }, take: 5 }).catch(() => []),
+    prisma.user.findFirst({ where: { isSpotlight: true } }).catch(() => null),
+    prisma.user.groupBy({
+      by: ['company'],
+      _count: { company: true },
+      where: { role: 'ALUMNI', company: { not: null } },
+      orderBy: { _count: { company: 'desc' } },
+      take: 5
+    })
   ]);
+
+  const formattedStats = companyStats
+    .filter(s => s.company)
+    .map(s => ({ name: s.company as string, count: s._count.company }));
 
   const assetMap = Object.fromEntries(assets.map(a => [a.key, a.url]));
 
-  // Mock data if DB is empty
+  // Use all banners for the sidebar slideshow (no limit)
   const displayBanners = recentBanners.length > 0 ? recentBanners : [
     { id: '1', imageUrl: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070', title: 'Welcome to KEC Alumni Portal', link: '/directory' },
     { id: '2', imageUrl: 'https://images.unsplash.com/photo-1541339907198-e08756ebafe3?q=80&w=2070', title: 'Connecting Generations of Excellence', link: '/feed' }
@@ -55,7 +86,38 @@ export default async function Home() {
 
   return (
     <div className="kec-container">
-      <HomeCarousel banners={displayBanners} />
+      {/* Compact hero strip instead of a full-width broad carousel */}
+      <div className={styles.heroStrip}>
+        <div className={styles.heroContent}>
+          <div className={styles.heroBadge}>
+            <Sparkles size={14} />
+            KEC Alumni Network
+          </div>
+          <h1 className={styles.heroTitle}>
+            Welcome back, <span>{user?.name || 'Explorer'}</span>
+          </h1>
+          <p className={styles.heroSub}>
+            Stay connected with {alumniCount + studentCount} members across the BTKIT community
+          </p>
+        </div>
+        <div className={styles.heroStats}>
+          <div className={styles.heroStat}>
+            <span className={styles.heroStatNum}>{alumniCount}</span>
+            <span className={styles.heroStatLabel}>Alumni</span>
+          </div>
+          <div className={styles.heroStatDivider} />
+          <div className={styles.heroStat}>
+            <span className={styles.heroStatNum}>{studentCount}</span>
+            <span className={styles.heroStatLabel}>Students</span>
+          </div>
+          <div className={styles.heroStatDivider} />
+          <div className={styles.heroStat}>
+            <span className={styles.heroStatNum}>{campusJobs.length}</span>
+            <span className={styles.heroStatLabel}>Campus Jobs</span>
+          </div>
+        </div>
+      </div>
+
       <div className={styles.standardGrid}>
         
         {/* Left Column: Profile Card */}
@@ -92,21 +154,28 @@ export default async function Home() {
              <Link href="/students"><GraduationCap size={16} /> Student Talent</Link>
              <Link href="/jobs"><Briefcase size={16} /> Job Postings</Link>
           </div>
+
+          <CareerInfographic companies={formattedStats} totalAlumni={alumniCount} />
         </aside>
 
-        {/* Center Column: Kec Community Feed */}
+        {/* Center Column: Social Community Feed */}
         <main className={styles.centerCol}>
           <section className={styles.pulseHeader}>
             <div className={styles.pulseInfo}>
-              <h2>Kec Feed Pulse</h2>
-              <p>Real-time evolution of the BTKIT (KEC) ecosystem</p>
+              <h2>KEC Community Pulse</h2>
+              <p>Real-time ecosystem highlights from BTKIT (KEC) heritage</p>
             </div>
           </section>
 
+          {spotlight && <AlumniSpotlight member={spotlight} />}
+
+          <CommunitySlider posts={recentPosts} />
+
+          <div className={styles.sectionHeader} style={{ marginTop: '2.5rem' }}>
+            <Plus size={18} /> New Members
+          </div>
+
           <section className={styles.card}>
-            <div className={styles.cardTitle}>
-              <Plus size={18} /> Recent Alumni Joins
-            </div>
             <div className={styles.userList}>
               {recentAlumni.map(u => (
                 <div key={u.id} className={styles.userCell}>
@@ -121,53 +190,76 @@ export default async function Home() {
             </div>
             <Link href="/directory" className={styles.footerLink}>Explore Full Alumni Directory ➔</Link>
           </section>
-
-          <section className={styles.card}>
-            <div className={styles.cardTitle}>
-              <Award size={18} /> Emerging Student Talent
-            </div>
-            <div className={styles.userList}>
-              {recentStudents.map(u => (
-                <div key={u.id} className={styles.userCell}>
-                  <img src={u.imageUrl || `https://ui-avatars.com/api/?name=${u.name}&background=7B61FF&color=fff`} className={styles.cellAvatar} />
-                  <div className={styles.cellText}>
-                    <strong>{u.name}</strong>
-                    <span>Starting {u.startYear} • {u.branch}</span>
-                  </div>
-                  <SyncButton userId={u.id} label="Sync Talents" />
-                </div>
-              ))}
-            </div>
-            <Link href="/students" className={styles.footerLink}>Meet Rising Undergraduates ➔</Link>
-          </section>
         </main>
 
-        {/* Right Column: News & Careers */}
+        {/* Right Column: Gallery + Campus Vacancies + Notice Board */}
         <aside className={styles.rightCol}>
+          <CampusPulse />
+          
+          {/* Sidebar Slideshow — uses all uploaded banners */}
+          <SidebarSlideshow banners={displayBanners} />
+
+          {/* Upcoming Events */}
+          {recentEvents.length > 0 && (
+            <section className={styles.card}>
+              <div className={styles.cardTitle}><Calendar size={18} /> Upcoming Events</div>
+              <div className={styles.eventList}>
+                {recentEvents.map(ev => (
+                  <div key={ev.id} className={styles.eventCell}>
+                    <div className={styles.eventDate}>
+                      <span className={styles.eventDay}>{new Date(ev.date).getDate()}</span>
+                      <span className={styles.eventMonth}>{new Date(ev.date).toLocaleString('default', { month: 'short' })}</span>
+                    </div>
+                    <div className={styles.eventInfo}>
+                      <strong>{ev.title}</strong>
+                      <span>by {ev.author.name}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Campus Vacancies — only admin-posted college jobs */}
           <section className={styles.card}>
-            <div className={styles.cardTitle}><Briefcase size={18} /> Career Pathway Pulse</div>
+            <div className={styles.cardTitle}><Building2 size={18} /> Campus Vacancies</div>
             <div className={styles.jobList}>
-              {recentJobs.map(job => (
-                <div key={job.id} className={styles.jobCell}>
-                  <strong>{job.title}</strong>
-                  <span>{job.company}</span>
-                  <Link href="/jobs" className={styles.tinyLink}>View Details</Link>
+              {campusJobs.map(job => (
+                <div key={job.id} className={styles.jobSidebarCell}>
+                  <div className={styles.jobSidebarHeader}>
+                    <strong>{job.title}</strong>
+                    <span className={styles.campusTag}>CAMPUS</span>
+                  </div>
+                  <div className={styles.jobSidebarSub}>
+                    {job.company}
+                  </div>
+                  <Link href="/jobs" className={styles.tinyActionLink}>View Details ➔</Link>
                 </div>
               ))}
+              {campusJobs.length === 0 && <p className={styles.emptyHint}>No campus vacancies at the moment.</p>}
             </div>
-            <Link href="/jobs" className={styles.footerLink}>All Opportunities ➔</Link>
+            <Link href="/jobs" className={styles.footerLink}>View All Vacancies</Link>
           </section>
 
+          {/* Notice Board — admin-published notices */}
           <section className={styles.card}>
-            <div className={styles.cardTitle}><BookOpen size={18} /> About BTKIT</div>
-            <div className={styles.seatInfo}>
-               <img 
-                 src={assetMap.SIDEBAR_CAMPUS_IMAGE || assetMap.CAMPUS_LOGO || "https://upload.wikimedia.org/wikipedia/en/e/e0/Bipin_Tripathi_Kumaon_Institute_of_Technology_logo.png"} 
-                 className={styles.seatLogo} 
-                 alt="Campus"
-               />
-               <p>Bipin Tripathi Kumaon Institute of Technology (BTKIT), Dwarahat was established in 1991 as an autonomous institution.</p>
-               <div className={styles.statBadge}>Legacy since 1991</div>
+            <div className={styles.cardTitle}><Megaphone size={18} /> Notice Board</div>
+            <div className={styles.noticeList}>
+              {notices.map((n: any) => (
+                <div key={n.id} className={styles.noticeCell}>
+                  <div className={styles.noticeHeader}>
+                    <strong>{n.title}</strong>
+                    {n.priority === 'URGENT' && <span className={styles.urgentTag}>URGENT</span>}
+                    {n.priority === 'IMPORTANT' && <span className={styles.importantTag}>IMPORTANT</span>}
+                  </div>
+                  <p className={styles.noticeContent}>{n.content}</p>
+                  <div className={styles.noticeMeta}>
+                    <span className={styles.noticeDesignation}>— {n.designation}</span>
+                    <span className={styles.noticeDate}>{new Date(n.createdAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              ))}
+              {notices.length === 0 && <p className={styles.emptyHint}>No notices posted yet.</p>}
             </div>
           </section>
         </aside>
