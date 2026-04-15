@@ -8,18 +8,32 @@ async function main() {
   const posts = await prisma.post.findMany();
   const messages = await prisma.message.findMany();
   const jobs = await prisma.job.findMany();
+  const jobImages = await prisma.jobImage.findMany();
   const jobInterests = await prisma.jobInterest.findMany();
   const events = await prisma.event.findMany();
   const verifiedEmails = await prisma.verifiedEmail.findMany();
+  const banners = await prisma.homeBanner.findMany();
+  const companies = await prisma.homeCompany.findMany();
+  const notices = await prisma.notice.findMany();
+  const assets = await prisma.siteAsset.findMany();
+  const configs = await prisma.siteConfig.findMany();
+  const legacyPhotos = await prisma.legacyPhoto.findMany();
 
   const data = {
     users,
     posts,
     messages,
     jobs,
+    jobImages,
     jobInterests,
     events,
-    verifiedEmails
+    verifiedEmails,
+    banners,
+    companies,
+    notices,
+    assets,
+    configs,
+    legacyPhotos
   };
 
   const scratchDir = path.join(__dirname, '..', 'scratch');

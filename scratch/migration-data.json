@@ -26,6 +26,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-13T12:12:32.188Z",
       "updatedAt": "2026-04-13T12:12:32.188Z"
     },
@@ -55,6 +58,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-13T12:12:32.190Z",
       "updatedAt": "2026-04-13T12:12:32.190Z"
     },
@@ -84,6 +90,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-13T12:12:32.192Z",
       "updatedAt": "2026-04-13T12:12:32.192Z"
     },
@@ -113,6 +122,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-13T12:12:32.193Z",
       "updatedAt": "2026-04-13T12:12:32.193Z"
     },
@@ -142,6 +154,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-13T12:12:32.195Z",
       "updatedAt": "2026-04-13T12:12:32.195Z"
     },
@@ -171,6 +186,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-13T12:12:32.197Z",
       "updatedAt": "2026-04-13T12:12:32.197Z"
     },
@@ -200,6 +218,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-13T12:12:32.199Z",
       "updatedAt": "2026-04-13T12:12:32.199Z"
     },
@@ -229,6 +250,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-13T12:12:32.201Z",
       "updatedAt": "2026-04-13T12:12:32.201Z"
     },
@@ -258,6 +282,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-13T12:12:32.203Z",
       "updatedAt": "2026-04-13T12:12:32.203Z"
     },
@@ -287,6 +314,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-13T12:12:32.205Z",
       "updatedAt": "2026-04-13T12:12:32.205Z"
     },
@@ -316,6 +346,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-13T12:12:32.207Z",
       "updatedAt": "2026-04-13T12:12:32.207Z"
     },
@@ -345,6 +378,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-13T12:12:32.209Z",
       "updatedAt": "2026-04-13T12:12:32.209Z"
     },
@@ -374,6 +410,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-13T12:12:32.211Z",
       "updatedAt": "2026-04-13T12:12:32.211Z"
     },
@@ -403,6 +442,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-13T12:12:32.213Z",
       "updatedAt": "2026-04-13T12:12:32.213Z"
     },
@@ -432,6 +474,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-13T12:12:32.215Z",
       "updatedAt": "2026-04-13T12:12:32.215Z"
     },
@@ -461,6 +506,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-13T16:09:23.068Z",
       "updatedAt": "2026-04-13T16:09:23.068Z"
     },
@@ -490,6 +538,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-13T18:15:44.141Z",
       "updatedAt": "2026-04-13T19:01:49.086Z"
     },
@@ -519,6 +570,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-13T18:16:38.566Z",
       "updatedAt": "2026-04-14T07:04:20.197Z"
     },
@@ -548,6 +602,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-14T08:19:13.737Z",
       "updatedAt": "2026-04-14T09:19:57.258Z"
     },
@@ -577,6 +634,9 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-14T08:45:57.454Z",
       "updatedAt": "2026-04-14T08:46:04.462Z"
     },
@@ -606,49 +666,53 @@
       "githubUrl": null,
       "twitterUrl": null,
       "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
       "createdAt": "2026-04-14T09:34:29.702Z",
       "updatedAt": "2026-04-14T09:39:47.884Z"
+    },
+    {
+      "id": "cmnz0qn5l000114p7gmp7rls5",
+      "email": "admin@kec.ac.in",
+      "password": "$2b$10$AgPT48ZZK0fjLJqiptQff.nuPKbb3uFICfAHT4LdAq4eG.IrULN16",
+      "role": "ADMIN",
+      "status": "APPROVED",
+      "name": "KEC Admin",
+      "bio": null,
+      "imageUrl": "https://ui-avatars.com/api/?name=KEC+Admin&background=7B61FF&color=fff",
+      "location": null,
+      "phone": null,
+      "website": null,
+      "branch": null,
+      "startYear": null,
+      "gradYear": null,
+      "rollNumber": null,
+      "hostel": null,
+      "higherStudies": null,
+      "company": null,
+      "jobRole": null,
+      "skills": null,
+      "achievements": null,
+      "linkedinUrl": null,
+      "githubUrl": null,
+      "twitterUrl": null,
+      "instagramUrl": null,
+      "canMentor": false,
+      "isSpotlight": false,
+      "spotlightBio": null,
+      "createdAt": "2026-04-14T19:32:43.065Z",
+      "updatedAt": "2026-04-14T19:32:43.065Z"
     }
   ],
   "posts": [
-    {
-      "id": "cmnxl4llw0001rqrz55lem0sr",
-      "content": "hi",
-      "imageUrl": null,
-      "authorId": "cmnxe1aws0000xts2plh95xtq",
-      "roleSnap": "ADMIN",
-      "createdAt": "2026-04-13T19:27:54.213Z"
-    },
-    {
-      "id": "cmnxl6avu0003rqrz0z6njmv7",
-      "content": "hello",
-      "imageUrl": null,
-      "authorId": "cmnxe1aws0000xts2plh95xtq",
-      "roleSnap": "ADMIN",
-      "createdAt": "2026-04-13T19:29:13.627Z"
-    },
-    {
-      "id": "cmnxlk78c0001niif1l5mwdlg",
-      "content": "This is a test by the admin i am checking whether the functionality if working properly or not.",
-      "imageUrl": null,
-      "authorId": "cmnxe1aws0000xts2plh95xtq",
-      "roleSnap": "ADMIN",
-      "createdAt": "2026-04-13T19:40:02.076Z"
-    },
-    {
-      "id": "cmnxlmlwl0003niifx7xn7m30",
-      "content": "Hi test",
-      "imageUrl": null,
-      "authorId": "cmnxe1aws0000xts2plh95xtq",
-      "roleSnap": "ADMIN",
-      "createdAt": "2026-04-13T19:41:54.405Z"
-    },
     {
       "id": "cmnydqjfy000e1362mo8lndu0",
       "content": "Hello this is elon musk the founder of the tesla , x and the starlink lets go to mars huh😁",
       "imageUrl": "/uploads/posts/cmnydmwjy000a1362f8hrazr1-1776156527081-mars.jpg",
       "authorId": "cmnydmwjy000a1362f8hrazr1",
       "roleSnap": "ALUMNI",
+      "status": "APPROVED",
       "createdAt": "2026-04-14T08:48:47.087Z"
     }
   ],
@@ -704,32 +768,16 @@
       "createdAt": "2026-04-14T08:53:02.974Z"
     }
   ],
-  "jobs": [
-    {
-      "id": "cmnyducd7000g13626oihfnql",
-      "title": "Test",
-      "company": "Testabc",
-      "description": "this is only the test to check the functionality is working correclty or not",
-      "link": "",
-      "authorId": "cmnxe1aws0000xts2plh95xtq",
-      "status": "APPROVED",
-      "createdAt": "2026-04-14T08:51:44.539Z"
-    }
-  ],
-  "jobInterests": [
-    {
-      "id": "cmnydupp9000i1362ik130j6d",
-      "userId": "cmnycoj48000c1murwn2xp69f",
-      "jobId": "cmnyducd7000g13626oihfnql",
-      "createdAt": "2026-04-14T08:52:01.822Z"
-    }
-  ],
+  "jobs": [],
+  "jobImages": [],
+  "jobInterests": [],
   "events": [],
   "verifiedEmails": [
     {
       "id": "cmnxe1aww0001xts244b5wb4v",
       "email": "pankaj@test.com",
       "name": "Pankaj Sharma",
+      "role": "ALUMNI",
       "authCode": null,
       "startYear": 2016,
       "gradYear": 2020,
@@ -739,6 +787,7 @@
       "id": "cmnxe1awy0002xts2ela2iapt",
       "email": "neha@test.com",
       "name": "Neha Gupta",
+      "role": "ALUMNI",
       "authCode": null,
       "startYear": 2017,
       "gradYear": 2021,
@@ -748,6 +797,7 @@
       "id": "cmnxe1ax00003xts2g9u83vch",
       "email": "rahul@test.com",
       "name": "Rahul Verma",
+      "role": "ALUMNI",
       "authCode": null,
       "startYear": 2018,
       "gradYear": 2022,
@@ -757,6 +807,7 @@
       "id": "cmnxe1ax20004xts2l06zc4nu",
       "email": "anjali@test.com",
       "name": "Anjali Singh",
+      "role": "ALUMNI",
       "authCode": null,
       "startYear": 2019,
       "gradYear": 2023,
@@ -766,6 +817,7 @@
       "id": "cmnxfrzjs0002146rx9duuvpg",
       "email": "240180102020@uktech.net.in",
       "name": "Harsh Singh",
+      "role": "ALUMNI",
       "authCode": null,
       "startYear": 2024,
       "gradYear": 2028,
@@ -775,6 +827,7 @@
       "id": "cmnxfrzk00003146rln9st5gi",
       "email": "bob.smith@example.com",
       "name": "Bob Smith",
+      "role": "ALUMNI",
       "authCode": "M4OCY3B4",
       "startYear": 2019,
       "gradYear": 2023,
@@ -784,6 +837,7 @@
       "id": "cmnxfrzk40004146rab9w7m4e",
       "email": "charlie.d@testmail.org",
       "name": "Charlie Davis",
+      "role": "ALUMNI",
       "authCode": "5MI6XXPD",
       "startYear": 2020,
       "gradYear": 2024,
@@ -793,6 +847,7 @@
       "id": "cmnxfrzk70005146rsvd2llm3",
       "email": "diana.p@university.edu",
       "name": "Diana Prince",
+      "role": "ALUMNI",
       "authCode": "WTQU0LLO",
       "startYear": 2017,
       "gradYear": 2021,
@@ -802,6 +857,7 @@
       "id": "cmnxfrzka0006146rpd1dzbah",
       "email": "ethan.h@mission.com",
       "name": "Ethan Hunt",
+      "role": "ALUMNI",
       "authCode": "R5508XTU",
       "startYear": 2021,
       "gradYear": 2025,
@@ -811,6 +867,7 @@
       "id": "cmnxfrzkd0007146rgmj8be61",
       "email": "fiona.g@southside.net",
       "name": "Fiona Gallagher",
+      "role": "ALUMNI",
       "authCode": "DJG33L2K",
       "startYear": 2018,
       "gradYear": 2022,
@@ -820,6 +877,7 @@
       "id": "cmnxfrzkg0008146r1b259pyf",
       "email": "george.m@cinema.au",
       "name": "George Miller",
+      "role": "ALUMNI",
       "authCode": "2BIHLWZY",
       "startYear": 2016,
       "gradYear": 2020,
@@ -829,6 +887,7 @@
       "id": "cmnxfrzkj0009146r7s53ww2u",
       "email": "hannah.a@hogwarts.uk",
       "name": "Hannah Abbott",
+      "role": "ALUMNI",
       "authCode": "ZUW28FG5",
       "startYear": 2020,
       "gradYear": 2024,
@@ -838,6 +897,7 @@
       "id": "cmnxfrzkm000a146rcjk5p30y",
       "email": "ian.w@football.com",
       "name": "Ian Wright",
+      "role": "ALUMNI",
       "authCode": "PMJ6UK74",
       "startYear": 2019,
       "gradYear": 2023,
@@ -847,6 +907,7 @@
       "id": "cmnxfrzkp000b146rj5tpul99",
       "email": "julia.r@hollywood.com",
       "name": "Julia Roberts",
+      "role": "ALUMNI",
       "authCode": "9YPP67AY",
       "startYear": 2017,
       "gradYear": 2021,
@@ -856,6 +917,7 @@
       "id": "cmnxii83p000g146r66fnrdiv",
       "email": "240180102003@uktech.net.in",
       "name": "Anjulesh Kushwaha",
+      "role": "ALUMNI",
       "authCode": null,
       "startYear": 2024,
       "gradYear": 2028,
@@ -865,6 +927,7 @@
       "id": "cmnxij0vs000h146rfku1pbj8",
       "email": "240180102036@uktech.net.in",
       "name": "Mohit Kumar",
+      "role": "ALUMNI",
       "authCode": null,
       "startYear": 2024,
       "gradYear": 2028,
@@ -874,6 +937,7 @@
       "id": "cmny81dfe0002my3hguo5u4rn",
       "email": "240180102044@uktech.net.in",
       "name": "Ravi Pandey",
+      "role": "ALUMNI",
       "authCode": "1A2B3",
       "startYear": 2024,
       "gradYear": 2028,
@@ -883,6 +947,7 @@
       "id": "cmnycn0re00031murpq36n5bj",
       "email": "240180102019@uktech.net.in",
       "name": "Harbans Singh",
+      "role": "ALUMNI",
       "authCode": "BTKT2",
       "startYear": 2019,
       "gradYear": 2023,
@@ -892,6 +957,7 @@
       "id": "cmnydm98x00021362icf2kvwc",
       "email": "elonmusk@tesla.com",
       "name": "Elon Musk",
+      "role": "ALUMNI",
       "authCode": "tesl1",
       "startYear": 2020,
       "gradYear": 2024,
@@ -901,10 +967,125 @@
       "id": "cmnyfc9sw00031nipiqnkpuws",
       "email": "241080102020@uktech.net.in",
       "name": "Harsh Singh",
+      "role": "ALUMNI",
       "authCode": "land5",
       "startYear": 2024,
       "gradYear": 2028,
       "createdAt": "2026-04-14T09:33:40.641Z"
+    },
+    {
+      "id": "cmnz0qn5h000014p7w520chdu",
+      "email": "admin@kec.ac.in",
+      "name": "KEC Admin",
+      "role": "ADMIN",
+      "authCode": "ADMIN123",
+      "startYear": null,
+      "gradYear": null,
+      "createdAt": "2026-04-14T19:32:43.061Z"
     }
-  ]
+  ],
+  "banners": [
+    {
+      "id": "cmnz04ipf0001yb8hukmirff7",
+      "imageUrl": "https://res.cloudinary.com/dztz30gio/image/upload/v1776194130/alumni-portal/banners/t13hdjto1p3iweqt5log.jpg",
+      "title": "",
+      "link": null,
+      "order": 0,
+      "createdAt": "2026-04-14T19:15:30.867Z"
+    },
+    {
+      "id": "cmnzk5a75000010mwyb00ax8t",
+      "imageUrl": "https://res.cloudinary.com/dztz30gio/image/upload/v1776227758/alumni-portal/banners/x2jabmwmjtoerexnxu1t.jpg",
+      "title": "",
+      "link": null,
+      "order": 1,
+      "createdAt": "2026-04-15T04:35:58.815Z"
+    },
+    {
+      "id": "cmnzy67hc00001btp7qltbjg0",
+      "imageUrl": "https://res.cloudinary.com/dztz30gio/image/upload/v1776251316/alumni-portal/banners/fsu2b6h3mwwvj123txvw.png",
+      "title": "",
+      "link": null,
+      "order": 2,
+      "createdAt": "2026-04-15T11:08:36.577Z"
+    },
+    {
+      "id": "cmnzyrab70003149gg1pbjpsp",
+      "imageUrl": "https://res.cloudinary.com/dztz30gio/image/upload/v1776252299/alumni-portal/banners/xjsobotsvf41wujxhxdr.png",
+      "title": "",
+      "link": null,
+      "order": 3,
+      "createdAt": "2026-04-15T11:25:00.019Z"
+    },
+    {
+      "id": "cmnzyrj420004149guug5dwd3",
+      "imageUrl": "https://res.cloudinary.com/dztz30gio/image/upload/v1776252311/alumni-portal/banners/gkvzevngoe7s4elfhdcy.jpg",
+      "title": "",
+      "link": null,
+      "order": 4,
+      "createdAt": "2026-04-15T11:25:11.426Z"
+    }
+  ],
+  "companies": [
+    {
+      "id": "cmnzxs4kb0000rg2alo40oe6j",
+      "name": "Aarmorics Security Inc, San Francisco, CA",
+      "logoUrl": null,
+      "order": 0,
+      "createdAt": "2026-04-15T10:57:39.611Z"
+    },
+    {
+      "id": "cmnzyhr0o0000149gjdfqtsow",
+      "name": "HCL Technologies, Hyderabad",
+      "logoUrl": null,
+      "order": 0,
+      "createdAt": "2026-04-15T11:17:35.113Z"
+    },
+    {
+      "id": "cmnzyi10w0001149gq5lafpx5",
+      "name": "Microsoft, Hyderabad",
+      "logoUrl": null,
+      "order": 0,
+      "createdAt": "2026-04-15T11:17:48.081Z"
+    },
+    {
+      "id": "cmnzyrso20005149gwlukm2su",
+      "name": "Sohar International Urea",
+      "logoUrl": null,
+      "order": 0,
+      "createdAt": "2026-04-15T11:25:23.810Z"
+    },
+    {
+      "id": "cmnzyruaj0006149gxdlve1yr",
+      "name": "UST",
+      "logoUrl": null,
+      "order": 0,
+      "createdAt": "2026-04-15T11:25:25.916Z"
+    },
+    {
+      "id": "cmnzyrv9z0007149gddybo701",
+      "name": "Udemy Inc. USA",
+      "logoUrl": null,
+      "order": 0,
+      "createdAt": "2026-04-15T11:25:27.191Z"
+    }
+  ],
+  "notices": [],
+  "assets": [
+    {
+      "id": "cmnz06klj000gyb8h7fad6kew",
+      "key": "CAMPUS_LOGO",
+      "url": "https://res.cloudinary.com/dztz30gio/image/upload/v1776252277/alumni-portal/site-assets/q1g9efesdzqrbr31w6cb.png",
+      "updatedAt": "2026-04-15T11:24:37.687Z"
+    }
+  ],
+  "configs": [
+    {
+      "id": "cmo01ki0900003mnjo01gtvsz",
+      "key": "OPEN_REGISTRATION",
+      "value": "FALSE",
+      "updatedAt": "2026-04-15T12:43:47.387Z"
+    }
+  ],
+  "legacyPhotos": []
 }

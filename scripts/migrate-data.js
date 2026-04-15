@@ -65,6 +65,18 @@ async function main() {
     });
   }
 
+  // 3.1 Job Images
+  for (const img of data.jobImages) {
+    if (!img.url.startsWith('http')) {
+       img.url = await uploadToCloudinary(img.url, 'jobs');
+    }
+    await prisma.jobImage.upsert({
+      where: { id: img.id },
+      update: img,
+      create: img,
+    });
+  }
+
   // 4. Job Interests
   for (const ji of data.jobInterests) {
     await prisma.jobInterest.upsert({
@@ -87,7 +99,7 @@ async function main() {
 
   // 6. Posts
   for (const post of data.posts) {
-    if (post.imageUrl) {
+    if (post.imageUrl && !post.imageUrl.startsWith('http')) {
       post.imageUrl = await uploadToCloudinary(post.imageUrl, 'posts');
     }
     await prisma.post.upsert({
@@ -99,13 +111,79 @@ async function main() {
 
   // 7. Messages
   for (const msg of data.messages) {
-    if (msg.imageUrl) {
+    if (msg.imageUrl && !msg.imageUrl.startsWith('http')) {
       msg.imageUrl = await uploadToCloudinary(msg.imageUrl, 'messages');
     }
     await prisma.message.upsert({
       where: { id: msg.id },
       update: msg,
       create: msg,
+    });
+  }
+
+  // 8. Banners
+  for (const banner of data.banners) {
+    if (banner.imageUrl && !banner.imageUrl.startsWith('http')) {
+      banner.imageUrl = await uploadToCloudinary(banner.imageUrl, 'banners');
+    }
+    await prisma.homeBanner.upsert({
+      where: { id: banner.id },
+      update: banner,
+      create: banner,
+    });
+  }
+
+  // 9. Companies
+  for (const company of data.companies) {
+    if (company.logoUrl && !company.logoUrl.startsWith('http')) {
+      company.logoUrl = await uploadToCloudinary(company.logoUrl, 'companies');
+    }
+    await prisma.homeCompany.upsert({
+      where: { id: company.id },
+      update: company,
+      create: company,
+    });
+  }
+
+  // 10. Notices
+  for (const notice of data.notices) {
+    await prisma.notice.upsert({
+      where: { id: notice.id },
+      update: notice,
+      create: notice,
+    });
+  }
+
+  // 11. Assets
+  for (const asset of data.assets) {
+    if (asset.url && !asset.url.startsWith('http')) {
+      asset.url = await uploadToCloudinary(asset.url, 'assets');
+    }
+    await prisma.siteAsset.upsert({
+      where: { id: asset.id },
+      update: asset,
+      create: asset,
+    });
+  }
+
+  // 12. Configs
+  for (const config of data.configs) {
+    await prisma.siteConfig.upsert({
+      where: { id: config.id },
+      update: config,
+      create: config,
+    });
+  }
+
+  // 13. Legacy Photos
+  for (const photo of data.legacyPhotos) {
+    if (photo.imageUrl && !photo.imageUrl.startsWith('http')) {
+      photo.imageUrl = await uploadToCloudinary(photo.imageUrl, 'legacy');
+    }
+    await prisma.legacyPhoto.upsert({
+      where: { id: photo.id },
+      update: photo,
+      create: photo,
     });
   }
 

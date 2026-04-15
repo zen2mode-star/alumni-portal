@@ -16,7 +16,7 @@ const prisma = new PrismaClient();
 
 export default async function Home() {
   const session = await verifySession();
-  
+
   const [alumniCount, studentCount, recentAlumni, recentStudents, campusJobs, user, recentBanners, recentCompanies, recentPosts, recentEvents, assets, notices, spotlight, companyStats] = await Promise.all([
     prisma.verifiedEmail.count(),
     prisma.user.count({ where: { role: 'STUDENT', status: 'APPROVED' } }),
@@ -43,8 +43,8 @@ export default async function Home() {
     }) : Promise.resolve(null),
     prisma.homeBanner.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
     prisma.homeCompany.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
-    prisma.post.findMany({ 
-      where: { status: 'APPROVED' }, 
+    prisma.post.findMany({
+      where: { status: 'APPROVED' },
       include: { author: { select: { name: true, role: true, imageUrl: true, company: true } } },
       orderBy: { createdAt: 'desc' },
       take: 4
@@ -119,40 +119,40 @@ export default async function Home() {
       </div>
 
       <div className={styles.standardGrid}>
-        
+
         {/* Left Column: Profile Card */}
         <aside className={styles.leftCol}>
           <div className={styles.identityCard}>
-            <div 
-              className={styles.coverBg} 
+            <div
+              className={styles.coverBg}
               style={assetMap.DEFAULT_COVER ? { backgroundImage: `url(${assetMap.DEFAULT_COVER})` } : {}}
             ></div>
             <div className={styles.idContent}>
-              <img 
-                src={user?.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'K')}&background=7B61FF&color=fff`} 
-                className={styles.idAvatar} 
+              <img
+                src={user?.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'K')}&background=7B61FF&color=fff`}
+                className={styles.idAvatar}
               />
               <h3>{user?.name || 'Campus Guest'}</h3>
               <p>{user?.jobRole || 'Future Leader'} {user?.company ? `@ ${user.company}` : ''}</p>
               <div className={styles.idStats}>
-                 <div className={styles.idStatRow}>
-                   <span>Network Strength</span>
-                   <span className={styles.statVal}>{alumniCount + studentCount}</span>
-                 </div>
-                 <div className={styles.idStatRow}>
-                   <span>Verified Alumni</span>
-                   <span className={styles.statVal}>{alumniCount}</span>
-                 </div>
+                <div className={styles.idStatRow}>
+                  <span>Network Strength</span>
+                  <span className={styles.statVal}>{alumniCount + studentCount}</span>
+                </div>
+                <div className={styles.idStatRow}>
+                  <span>Verified Alumni</span>
+                  <span className={styles.statVal}>{alumniCount}</span>
+                </div>
               </div>
               <Link href="/dashboard" className={styles.idAction}>View My Profile</Link>
             </div>
           </div>
 
           <div className={styles.quickLinks}>
-             <p>Campus Resources</p>
-             <Link href="/directory"><Users size={16} /> Alumni Network</Link>
-             <Link href="/students"><GraduationCap size={16} /> Student Talent</Link>
-             <Link href="/jobs"><Briefcase size={16} /> Job Postings</Link>
+            <p>Campus Resources</p>
+            <Link href="/directory"><Users size={16} /> Alumni Network</Link>
+            <Link href="/students"><GraduationCap size={16} /> Student Talent</Link>
+            <Link href="/jobs"><Briefcase size={16} /> Job Postings</Link>
           </div>
 
           <CareerInfographic companies={formattedStats} totalAlumni={alumniCount} />
@@ -195,7 +195,7 @@ export default async function Home() {
         {/* Right Column: Gallery + Campus Vacancies + Notice Board */}
         <aside className={styles.rightCol}>
           <CampusPulse />
-          
+
           {/* Sidebar Slideshow — uses all uploaded banners */}
           <SidebarSlideshow banners={displayBanners} />
 
