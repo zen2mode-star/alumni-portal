@@ -8,7 +8,13 @@ export default function UserApprovalList({ initialUsers }: { initialUsers: any[]
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const [newPass, setNewPass] = useState('');
   const [loading, setLoading] = useState<string | null>(null);
+  const [roleFilter, setRoleFilter] = useState('ALL');
   const router = useRouter();
+
+  const filteredUsers = initialUsers.filter(user => {
+    if (roleFilter === 'ALL') return true;
+    return user.role === roleFilter;
+  });
 
   async function handleToggle(userId: string, status: string) {
     setLoading(userId);
@@ -36,12 +42,59 @@ export default function UserApprovalList({ initialUsers }: { initialUsers: any[]
     } else {
       alert(res.error);
     }
-    setLoading(null);
+    setLoading(userId);
   }
+
+  function exportCSV() {
+    const headers = ['Name', 'Email', 'Role', 'Status', 'Batch', 'Branch'];
+    const rows = filteredUsers.map(user => [
+      user.name,
+      user.email,
+      user.role,
+      user.status,
+      `${user.startYear}-${user.gradYear}`,
+      user.branch
+    ]);
+    
+    const csvContent = [headers, ...rows].map(e => e.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `kec_members_${roleFilter.toLowerCase()}_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  const roleTypes = [
+    { id: 'ALL', label: 'All Identities' },
+    { id: 'ALUMNI', label: 'Alumni' },
+    { id: 'STAFF', label: 'KEC Staff' },
+    { id: 'STUDENT', label: 'Students' },
+    { id: 'ADMIN', label: 'Admins' },
+  ];
 
   return (
     <div className={styles.approvalSection}>
-      <h2>Global Identity Ledger</h2>
+      <header className={styles.filterRow}>
+        <div className={styles.filterGroup}>
+          {roleTypes.map(type => (
+            <button 
+              key={type.id}
+              className={`${styles.filterBtn} ${roleFilter === type.id ? styles.filterBtnActive : ''}`}
+              onClick={() => setRoleFilter(type.id)}
+            >
+              {type.label}
+            </button>
+          ))}
+        </div>
+        <button onClick={exportCSV} className={styles.exportBtn}>
+          📥 Export List to CSV
+        </button>
+      </header>
+
       <div className={styles.tableWrapper}>
         <table className={styles.table}>
           <thead>
@@ -53,11 +106,11 @@ export default function UserApprovalList({ initialUsers }: { initialUsers: any[]
             </tr>
           </thead>
           <tbody>
-            {initialUsers.map(user => (
+            {filteredUsers.map(user => (
               <tr key={user.id} className={loading === user.id ? styles.rowLoading : ''}>
                 <td>
                   <div className={styles.userName}>{user.name}</div>
-                  <div className={styles.userBatch}>{user.branch} • {user.startYear}-{user.gradYear}</div>
+                  <div className={styles.userBatch}>{user.branch || 'General'} • {user.startYear || '?'}-{user.gradYear || '?'}</div>
                 </td>
                 <td>
                   <div className={styles.userEmail}>{user.email}</div>
@@ -113,6 +166,11 @@ export default function UserApprovalList({ initialUsers }: { initialUsers: any[]
             ))}
           </tbody>
         </table>
+        {filteredUsers.length === 0 && (
+          <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+            No members found in this category.
+          </div>
+        )}
       </div>
     </div>
   );

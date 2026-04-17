@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { PrismaClient } from '@prisma/client';
 import { verifySession } from '@/lib/session';
-import { Award, BookOpen, Briefcase, GraduationCap, Plus, Users, Image as ImageIcon, Sparkles, TrendingUp, Calendar, Megaphone, Building2 } from 'lucide-react';
+import { Award, BookOpen, Briefcase, GraduationCap, Plus, Users, Image as ImageIcon, Sparkles, TrendingUp, Calendar, Megaphone, Building2, UserCheck } from 'lucide-react';
 import CommunitySlider from '@/components/CommunitySlider';
 import SyncButton from '@/components/SyncButton';
 import SidebarSlideshow from '@/components/SidebarSlideshow';
@@ -152,6 +152,7 @@ export default async function Home() {
             <p>Campus Resources</p>
             <Link href="/directory"><Users size={16} /> Alumni Network</Link>
             <Link href="/students"><GraduationCap size={16} /> Student Talent</Link>
+            <Link href="/faculty"><UserCheck size={16} /> Faculty Directory</Link>
             <Link href="/jobs"><Briefcase size={16} /> Job Postings</Link>
           </div>
 

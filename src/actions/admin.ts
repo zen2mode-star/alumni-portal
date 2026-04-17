@@ -72,7 +72,7 @@ export async function handleLegacyPhoto(id: string, action: 'APPROVE' | 'REJECT'
   }
 }
 
-export async function addVerifiedEmail(data: { name: string, email: string, startYear: number, gradYear: number }) {
+export async function addVerifiedEmail(data: { name: string, email: string, startYear: number, gradYear: number, authCode?: string, role?: string }) {
   try {
     const session = await verifySession();
     if (!session || session.role !== 'ADMIN') return { error: 'Unauthorized' };
@@ -82,7 +82,9 @@ export async function addVerifiedEmail(data: { name: string, email: string, star
         name: data.name,
         email: data.email,
         startYear: data.startYear,
-        gradYear: data.gradYear
+        gradYear: data.gradYear,
+        authCode: data.authCode || null,
+        role: data.role || 'ALUMNI'
       }
     });
 
@@ -170,12 +172,26 @@ export async function uploadVerifiedEmails(formData: FormData) {
     let count = 0;
 
     for (const row of rows) {
-      const [name, email, startYear, gradYear] = row.split(',').map(s => s?.trim());
+      if (!row.trim()) continue;
+      const [name, email, startYear, gradYear, authCode, role] = row.split(',').map(s => s?.trim());
       if (email && name) {
         await prisma.verifiedEmail.upsert({
           where: { email },
-          update: { name, startYear: parseInt(startYear), gradYear: parseInt(gradYear) },
-          create: { name, email, startYear: parseInt(startYear), gradYear: parseInt(gradYear) }
+          update: { 
+            name, 
+            startYear: parseInt(startYear) || null, 
+            gradYear: parseInt(gradYear) || null,
+            authCode: authCode || null,
+            role: (role?.toUpperCase() === 'STAFF' ? 'STAFF' : 'ALUMNI')
+          },
+          create: { 
+            name, 
+            email, 
+            startYear: parseInt(startYear) || null, 
+            gradYear: parseInt(gradYear) || null,
+            authCode: authCode || null,
+            role: (role?.toUpperCase() === 'STAFF' ? 'STAFF' : 'ALUMNI')
+          }
         });
         count++;
       }

@@ -205,3 +205,16 @@
 }
 
 .addForm button { grid-column: 1 / -1; background: var(--accent-color); color: white; padding: 1rem; border-radius: 12px; font-weight: 800; font-size: 0.9rem; border: none; cursor: pointer; }
+.addForm select { padding: 1rem; border-radius: 10px; border: 1px solid var(--card-border); background: var(--bg-color); color: var(--text-primary); font-size: 0.9rem; width: 100%; }
+
+/* Filtering & Controls */
+.filterRow { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; gap: 1rem; flex-wrap: wrap; }
+.filterGroup { display: flex; gap: 0.5rem; }
+.filterBtn { padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid var(--card-border); background: var(--card-bg); color: var(--text-secondary); font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+.filterBtnActive { background: var(--accent-color); color: white; border-color: var(--accent-color); box-shadow: 0 4px 12px var(--accent-glow); }
+
+.exportBtn { display: flex; alignItems: center; gap: 0.5rem; background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--card-border); padding: 0.5rem 1.25rem; border-radius: 10px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
+.exportBtn:hover { border-color: var(--accent-color); background: var(--card-border); }
+
+.codeSnippet { background: var(--bg-color); padding: 0.2rem 0.5rem; border-radius: 4px; color: var(--accent-color); font-family: monospace; font-size: 0.8rem; border: 1px solid var(--card-border); }
+.roleBadge { display: inline-block; padding: 0.25rem 0.6rem; border-radius: 6px; background: rgba(123, 97, 255, 0.1); color: var(--accent-color); font-size: 0.65rem; font-weight: 800; text-transform: uppercase; border: 1px solid rgba(123, 97, 255, 0.2); }

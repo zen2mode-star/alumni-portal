@@ -14,8 +14,10 @@ export default function VerifiedEmailList({ initialEmails }: { initialEmails: an
     const data = {
       name: formData.get('name') as string,
       email: formData.get('email') as string,
-      startYear: parseInt(formData.get('startYear') as string),
-      gradYear: parseInt(formData.get('gradYear') as string)
+      authCode: formData.get('authCode') as string,
+      role: formData.get('role') as string,
+      startYear: parseInt(formData.get('startYear') as string) || 0,
+      gradYear: parseInt(formData.get('gradYear') as string) || 0
     };
     await addVerifiedEmail(data);
     setLoading(false);
@@ -35,8 +37,13 @@ export default function VerifiedEmailList({ initialEmails }: { initialEmails: an
         <form onSubmit={handleAdd} className={styles.addForm}>
           <input name="name" placeholder="Full Name" required />
           <input name="email" type="email" placeholder="Official Email" required />
-          <input name="startYear" type="number" placeholder="Start Year" required />
-          <input name="gradYear" type="number" placeholder="Graduation Year" required />
+          <input name="authCode" placeholder="Institutional Auth Code" />
+          <select name="role" required defaultValue="ALUMNI">
+            <option value="ALUMNI">Alumni Member</option>
+            <option value="STAFF">KEC Staff</option>
+          </select>
+          <input name="startYear" type="number" placeholder="Start Year" />
+          <input name="gradYear" type="number" placeholder="Graduation Year" />
           <button type="submit" disabled={loading}>{loading ? 'Saving...' : 'Whitelist Member'}</button>
         </form>
       )}
@@ -47,6 +54,8 @@ export default function VerifiedEmailList({ initialEmails }: { initialEmails: an
             <tr>
               <th>Name</th>
               <th>Email</th>
+              <th>Auth Code</th>
+              <th>Role</th>
               <th>Batch</th>
               <th>Verified Date</th>
             </tr>
@@ -56,7 +65,9 @@ export default function VerifiedEmailList({ initialEmails }: { initialEmails: an
               <tr key={rec.id}>
                 <td>{rec.name}</td>
                 <td>{rec.email}</td>
-                <td>{rec.startYear} - {rec.gradYear}</td>
+                <td><code className={styles.codeSnippet}>{rec.authCode || 'None'}</code></td>
+                <td><span className={styles.roleBadge}>{rec.role}</span></td>
+                <td>{rec.startYear ? `${rec.startYear} - ${rec.gradYear}` : 'N/A'}</td>
                 <td>{new Date(rec.createdAt).toLocaleDateString()}</td>
               </tr>
             ))}
