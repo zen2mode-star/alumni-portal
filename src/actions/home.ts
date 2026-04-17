@@ -19,10 +19,10 @@ export async function addBanner(formData: FormData) {
       return { error: 'Please select an image file.' };
     }
 
-    // Enforce max 10 banners
+    // Enforce max 20 banners
     const existingCount = await prisma.homeBanner.count();
-    if (existingCount >= 10) {
-      return { error: 'Maximum 10 slides allowed. Delete an existing slide first.' };
+    if (existingCount >= 20) {
+      return { error: 'Maximum 20 slides allowed. Delete an existing slide first.' };
     }
 
     const imageUrl = await uploadImage(imageFile, 'banners');

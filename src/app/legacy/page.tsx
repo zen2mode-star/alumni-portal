@@ -3,6 +3,7 @@ import { History, Award, Users, Search } from 'lucide-react';
 import styles from './page.module.css';
 import AlumniCard from '@/components/AlumniCard';
 import MemoryUpload from '@/components/MemoryUpload';
+import LegacyMagazine from '@/components/LegacyMagazine';
 import { getLegacyPhotos } from '@/actions/legacy';
 
 const prisma = new PrismaClient();
@@ -49,6 +50,16 @@ export default async function LegacyWall({ searchParams }: { searchParams: Promi
           </div>
         </div>
       </header>
+      
+      {photos.length > 0 && (
+        <section className={styles.magazineSection}>
+          <div className={styles.sectionTitle}>
+             <Award size={24} color="var(--primary-color)" />
+             <h2>Institutional Journal: Class of {selectedYear || 'All Batches'}</h2>
+          </div>
+          <LegacyMagazine photos={photos} />
+        </section>
+      )}
 
       <div className={styles.legacyGrid}>
         {/* Left: Timeline Navigation */}
@@ -70,19 +81,6 @@ export default async function LegacyWall({ searchParams }: { searchParams: Promi
 
         {/* Right: Alumni Display */}
         <main className={styles.alumniView}>
-          {photos.length > 0 && (
-            <section className={styles.memorySection}>
-              <h3>🎞️ Community Memories</h3>
-              <div className={styles.memoryGallery}>
-                {photos.map(p => (
-                  <div key={p.id} className={styles.memoryItem}>
-                    <img src={p.imageUrl} alt="Legacy Memory" />
-                    {p.caption && <p>{p.caption}</p>}
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
 
           <div className={styles.networkGrid}>
             {formattedAlumni.map(person => (

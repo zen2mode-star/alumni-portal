@@ -18,6 +18,7 @@ import {
   History
 } from 'lucide-react';
 import { logout } from '@/actions/auth';
+import { getUserNotifications } from '@/actions/admin';
 import ThemeToggle from './ThemeToggle';
 import styles from './TopNavbar.module.css';
 
@@ -32,9 +33,19 @@ interface Props {
 
 export default function TopNavbar({ user, unreadCount, isAdmin, latestPostTime, logoUrl }: Props) {
   const [isMeOpen, setIsMeOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [notifications, setNotifications] = useState<any[]>([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hasNewPosts, setHasNewPosts] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (user) {
+      getUserNotifications().then(setNotifications);
+    }
+  }, [user]);
+
+  const unreadNotifCount = notifications.filter(n => !n.read).length;
 
   useEffect(() => {
     if (latestPostTime) {
@@ -54,14 +65,12 @@ export default function TopNavbar({ user, unreadCount, isAdmin, latestPostTime, 
 
   const navItems = [
     { label: 'Home', icon: Home, href: '/' },
-    { label: 'Alumni Network', icon: Users, href: '/directory' },
-    { label: 'KEC Staff', icon: UserCheck, href: '/staff' },
-    { label: 'Undergrad Network', icon: GraduationCap, href: '/students' },
+    { label: 'KEC Ecosystem', icon: Users, href: '/directory?role=CAMPUS' },
+    { label: 'Alumni Connect', icon: GraduationCap, href: '/directory?role=ALUMNI' },
     { label: 'Legacy Wall', icon: History, href: '/legacy' },
-    { label: 'Faculty', icon: UserCheck, href: '/faculty' },
     { label: 'Careers', icon: Briefcase, href: '/jobs' },
     { label: 'Messages', icon: MessageSquare, href: '/messages', badge: unreadCount },
-    { label: 'Kec Feed', icon: Bell, href: '/feed' },
+    { label: 'KEC Feed', icon: Bell, href: '/feed' },
   ];
 
   return (
@@ -70,12 +79,12 @@ export default function TopNavbar({ user, unreadCount, isAdmin, latestPostTime, 
         {/* Left: Brand & Search */}
         <div className={styles.left}>
           <Link href="/" className={styles.logo}>
-            <img src={logoUrl || "/btkit-logo.png"} alt="BTKIT" className={styles.kecLogo} />
-            <span className={styles.brandName}>KecAlumni<span className={styles.brandDot}>.in</span></span>
+            <img src={logoUrl || "/btkit-logo.png"} alt="KEC" className={styles.kecLogo} />
+            <span className={styles.brandName}>KecNetwork<span className={styles.brandDot}>.in</span></span>
           </Link>
           <div className={styles.searchWrapper}>
             <Search className={styles.searchIcon} size={18} />
-            <input type="text" placeholder="Search Kec Feed..." className={styles.searchInput} />
+            <input type="text" placeholder="Search KecNetwork.in..." className={styles.searchInput} />
           </div>
         </div>
 
@@ -102,6 +111,47 @@ export default function TopNavbar({ user, unreadCount, isAdmin, latestPostTime, 
           })}
 
           <div className={styles.divider}></div>
+
+          {/* Notifications Dropdown */}
+          {user && (
+            <div className={styles.meDropdown}>
+              <button 
+                className={styles.meTrigger} 
+                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+              >
+                <div className={styles.iconWrapper}>
+                   <Bell size={24} strokeWidth={isNotificationsOpen ? 2.5 : 2} />
+                   {unreadNotifCount > 0 && <span className={styles.badge}>{unreadNotifCount}</span>}
+                </div>
+              </button>
+
+              {isNotificationsOpen && (
+                <div className={styles.notificationDropdown} onMouseLeave={() => setIsNotificationsOpen(false)}>
+                  <div className={styles.dropdownHeader}>
+                    Institutional Alerts
+                  </div>
+                  <div className={styles.notificationList}>
+                    {notifications.length === 0 ? (
+                      <p className={styles.emptyText}>No recent alerts</p>
+                    ) : (
+                      notifications.map(n => (
+                        <div key={n.id} className={`${styles.notifItem} ${!n.read ? styles.unread : ''}`}>
+                          <div className={styles.notifIcon}>
+                             {n.type === 'STRIKE' ? '⚠️' : n.type === 'EDIT' ? '📝' : '🔒'}
+                          </div>
+                          <div className={styles.notifContent}>
+                            <p>{n.message}</p>
+                            <span>{new Date(n.createdAt).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  <Link href="/dashboard/notifications" className={styles.viewAll}>View All Network Syncs</Link>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Profile 'Me' Dropdown */}
           {user ? (

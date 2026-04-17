@@ -14,6 +14,7 @@ model User {
   role             String        @default("STUDENT")
   status           String        @default("PENDING")
   name             String
+  designation      String?
   bio              String?
   imageUrl         String?
   location         String?
@@ -36,6 +37,8 @@ model User {
   canMentor        Boolean       @default(false)
   isSpotlight      Boolean       @default(false)
   spotlightBio     String?
+  warningCount     Int           @default(0)
+  isBlocked        Boolean       @default(false)
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
   authoredEvents   Event[]
@@ -45,6 +48,12 @@ model User {
   sentMessages     Message[]     @relation("SentMessages")
   posts            Post[]
   legacyPhotos     LegacyPhoto[]
+  notifications    Notification[]
+  appeals          Appeal[]
+  blocksGiven      Block[]       @relation("BlocksGiven")
+  blocksReceived   Block[]       @relation("BlocksReceived")
+  strikesGiven     Strike[]      @relation("StrikesGiven")
+  strikesReceived  Strike[]      @relation("StrikesReceived")
 }
 
 model Post {
@@ -54,14 +63,18 @@ model Post {
   authorId  String
   roleSnap  String
   status    String   @default("APPROVED")
+  adminEdited Boolean  @default(false)
   createdAt DateTime @default(now())
   author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  appeals   Appeal[]
 }
 
 model Message {
   id         String   @id @default(cuid())
-  content    String
+  content    String?
   imageUrl   String?
+  audioUrl   String?
+  type       String   @default("TEXT") // TEXT, IMAGE, AUDIO
   senderId   String
   receiverId String
   read       Boolean  @default(false)
@@ -69,6 +82,52 @@ model Message {
   createdAt  DateTime @default(now())
   receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
   sender     User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  message   String
+  type      String   @default("INFO") // INFO, STRIKE, EDIT, ADMIN
+  read      Boolean  @default(false)
+  targetId  String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Appeal {
+  id              String   @id @default(cuid())
+  userId          String
+  postId          String
+  reason          String
+  originalContent String?
+  status          String   @default("PENDING") // PENDING, RESOLVED, REJECTED
+  createdAt       DateTime @default(now())
+  post            Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Block {
+  id        String   @id @default(cuid())
+  blockerId String
+  blockedId String
+  createdAt DateTime @default(now())
+  blocked   User     @relation("BlocksReceived", fields: [blockedId], references: [id], onDelete: Cascade)
+  blocker   User     @relation("BlocksGiven", fields: [blockerId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, blockedId])
+}
+
+model Strike {
+  id        String   @id @default(cuid())
+  strikerId String
+  targetId  String
+  reason    String?
+  createdAt DateTime @default(now())
+  striker   User     @relation("StrikesGiven", fields: [strikerId], references: [id], onDelete: Cascade)
+  target    User     @relation("StrikesReceived", fields: [targetId], references: [id], onDelete: Cascade)
+
+  @@unique([strikerId, targetId])
 }
 
 model Job {

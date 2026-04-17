@@ -10,6 +10,7 @@ import AlumniCompanies from '@/components/AlumniCompanies';
 import CampusPulse from '@/components/CampusPulse';
 import AlumniSpotlight from '@/components/AlumniSpotlight';
 import CareerInfographic from '@/components/CareerInfographic';
+import { normalizeBranch } from '@/lib/normalize';
 import styles from './page.module.css';
 
 const prisma = new PrismaClient();
@@ -17,8 +18,9 @@ const prisma = new PrismaClient();
 export default async function Home() {
   const session = await verifySession();
 
-  const [alumniCount, studentCount, recentAlumni, recentStudents, campusJobs, user, recentBanners, recentCompanies, recentPosts, recentEvents, assets, notices, spotlight, companyStats] = await Promise.all([
-    prisma.verifiedEmail.count(),
+  const [alumniCount, staffCount, studentCount, recentAlumni, recentStudents, campusJobs, user, recentBanners, recentCompanies, recentPosts, recentEvents, assets, notices, spotlight, companyStats] = await Promise.all([
+    prisma.user.count({ where: { role: 'ALUMNI', status: 'APPROVED' } }),
+    prisma.user.count({ where: { role: 'STAFF', status: 'APPROVED' } }),
     prisma.user.count({ where: { role: 'STUDENT', status: 'APPROVED' } }),
     prisma.user.findMany({
       where: { role: 'ALUMNI', status: 'APPROVED' },
@@ -91,13 +93,13 @@ export default async function Home() {
         <div className={styles.heroContent}>
           <div className={styles.heroBadge}>
             <Sparkles size={14} />
-            KEC Alumni Network
+            KEC Network
           </div>
           <h1 className={styles.heroTitle}>
             Welcome back, <span>{user?.name || 'Explorer'}</span>
           </h1>
           <p className={styles.heroSub}>
-            Stay connected with {alumniCount + studentCount} members across the BTKIT community
+            Live community pulse: {alumniCount + staffCount + studentCount} members across the KEC Network
           </p>
         </div>
         <div className={styles.heroStats}>
@@ -107,13 +109,13 @@ export default async function Home() {
           </div>
           <div className={styles.heroStatDivider} />
           <div className={styles.heroStat}>
-            <span className={styles.heroStatNum}>{studentCount}</span>
-            <span className={styles.heroStatLabel}>Students</span>
+            <span className={styles.heroStatNum}>{staffCount}</span>
+            <span className={styles.heroStatLabel}>KEC Staff</span>
           </div>
           <div className={styles.heroStatDivider} />
           <div className={styles.heroStat}>
-            <span className={styles.heroStatNum}>{campusJobs.length}</span>
-            <span className={styles.heroStatLabel}>Campus Jobs</span>
+            <span className={styles.heroStatNum}>{studentCount}</span>
+            <span className={styles.heroStatLabel}>Students</span>
           </div>
         </div>
       </div>
@@ -133,15 +135,15 @@ export default async function Home() {
                 className={styles.idAvatar}
               />
               <h3>{user?.name || 'Campus Guest'}</h3>
-              <p>{user?.jobRole || 'Future Leader'} {user?.company ? `@ ${user.company}` : ''}</p>
+              <p>{user?.jobRole || 'Member'} {user?.company ? `@ ${user.company}` : ''}</p>
               <div className={styles.idStats}>
                 <div className={styles.idStatRow}>
-                  <span>Network Strength</span>
-                  <span className={styles.statVal}>{alumniCount + studentCount}</span>
+                  <span>Network Sync</span>
+                  <span className={styles.statVal}>{alumniCount + staffCount + studentCount}</span>
                 </div>
                 <div className={styles.idStatRow}>
-                  <span>Verified Alumni</span>
-                  <span className={styles.statVal}>{alumniCount}</span>
+                  <span>Your Branch</span>
+                  <span className={styles.statVal}>{normalizeBranch(user?.branch)}</span>
                 </div>
               </div>
               <Link href="/dashboard" className={styles.idAction}>View My Profile</Link>
@@ -150,9 +152,9 @@ export default async function Home() {
 
           <div className={styles.quickLinks}>
             <p>Campus Resources</p>
-            <Link href="/directory"><Users size={16} /> Alumni Network</Link>
-            <Link href="/students"><GraduationCap size={16} /> Student Talent</Link>
-            <Link href="/faculty"><UserCheck size={16} /> Faculty Directory</Link>
+            <Link href="/directory"><Users size={16} /> Member Network</Link>
+            <Link href="/directory?role=STUDENT"><GraduationCap size={16} /> Student Talent</Link>
+            <Link href="/directory?role=STAFF"><UserCheck size={16} /> Staff & Faculty</Link>
             <Link href="/jobs"><Briefcase size={16} /> Job Postings</Link>
           </div>
 
@@ -183,7 +185,7 @@ export default async function Home() {
                   <img src={u.imageUrl || `https://ui-avatars.com/api/?name=${u.name}&background=7B61FF&color=fff`} className={styles.cellAvatar} />
                   <div className={styles.cellText}>
                     <strong>{u.name}</strong>
-                    <span>Class of {u.gradYear} • {u.branch}</span>
+                    <span>Class of {u.gradYear} • {normalizeBranch(u.branch)}</span>
                   </div>
                   <SyncButton userId={u.id} label="Synchronize" />
                 </div>

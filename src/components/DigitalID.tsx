@@ -16,13 +16,13 @@ export default function DigitalID({ user }: IDProps) {
         <div className={styles.logoRow}>
           <img src="/btkit-logo.png" className={styles.kecLogo} alt="KEC" />
           <div className={styles.brandTitle}>
-            <span>KEC ALUMNI</span>
+            <span>KEC</span>
             <strong>NETWORK</strong>
           </div>
         </div>
         <div className={styles.verifiedBadge}>
           <ShieldCheck size={14} />
-          VERIFIED MEMBER
+          OFFICIAL MEMBER
         </div>
       </div>
 

@@ -9,12 +9,53 @@ export default function UserApprovalList({ initialUsers }: { initialUsers: any[]
   const [newPass, setNewPass] = useState('');
   const [loading, setLoading] = useState<string | null>(null);
   const [roleFilter, setRoleFilter] = useState('ALL');
+  const [sortField, setSortField] = useState('createdAt');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const router = useRouter();
 
-  const filteredUsers = initialUsers.filter(user => {
-    if (roleFilter === 'ALL') return true;
-    return user.role === roleFilter;
-  });
+  const filteredUsers = initialUsers
+    .filter(user => {
+      // Role Filter
+      if (roleFilter !== 'ALL' && user.role !== roleFilter) return false;
+      
+      // Date Range Filter
+      if (startDate || endDate) {
+        const userDate = new Date(user.createdAt).getTime();
+        const start = startDate ? new Date(startDate).getTime() : 0;
+        const end = endDate ? new Date(endDate).getTime() : Infinity;
+        if (userDate < start || userDate > end) return false;
+      }
+      
+      return true;
+    })
+    .sort((a, b) => {
+      const valA = a[sortField as keyof typeof a];
+      const valB = b[sortField as keyof typeof b];
+      
+      if (sortField === 'createdAt') {
+        return sortOrder === 'asc' 
+          ? new Date(valA as string).getTime() - new Date(valB as string).getTime()
+          : new Date(valB as string).getTime() - new Date(valA as string).getTime();
+      }
+      
+      if (typeof valA === 'string' && typeof valB === 'string') {
+        return sortOrder === 'asc' 
+          ? valA.localeCompare(valB)
+          : valB.localeCompare(valA);
+      }
+      return 0;
+    });
+
+  const toggleSort = (field: string) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortOrder('asc');
+    }
+  };
 
   async function handleToggle(userId: string, status: string) {
     setLoading(userId);
@@ -78,29 +119,76 @@ export default function UserApprovalList({ initialUsers }: { initialUsers: any[]
 
   return (
     <div className={styles.approvalSection}>
-      <header className={styles.filterRow}>
-        <div className={styles.filterGroup}>
-          {roleTypes.map(type => (
-            <button 
-              key={type.id}
-              className={`${styles.filterBtn} ${roleFilter === type.id ? styles.filterBtnActive : ''}`}
-              onClick={() => setRoleFilter(type.id)}
-            >
-              {type.label}
-            </button>
-          ))}
+      <header className={styles.filterRow} style={{ flexDirection: 'column', gap: '1rem', alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+          <div className={styles.filterGroup}>
+            {roleTypes.map(type => (
+              <button 
+                key={type.id}
+                className={`${styles.filterBtn} ${roleFilter === type.id ? styles.filterBtnActive : ''}`}
+                onClick={() => setRoleFilter(type.id)}
+              >
+                {type.label}
+              </button>
+            ))}
+          </div>
+          <button onClick={exportCSV} className={styles.exportBtn}>
+            📥 Export List to CSV
+          </button>
         </div>
-        <button onClick={exportCSV} className={styles.exportBtn}>
-          📥 Export List to CSV
-        </button>
+
+        <div style={{ 
+          display: 'flex', 
+          gap: '1rem', 
+          alignItems: 'center', 
+          background: 'rgba(255,255,255,0.03)', 
+          padding: '0.75rem 1.25rem', 
+          borderRadius: '12px',
+          width: '100%'
+        }}>
+          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>📅 Registration Window:</span>
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            <label style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>From</label>
+            <input 
+              type="date" 
+              value={startDate} 
+              onChange={e => setStartDate(e.target.value)}
+              className={styles.dateInput}
+            />
+          </div>
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            <label style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>To</label>
+            <input 
+              type="date" 
+              value={endDate} 
+              onChange={e => setEndDate(e.target.value)}
+              className={styles.dateInput}
+            />
+          </div>
+          {(startDate || endDate) && (
+            <button 
+              onClick={() => { setStartDate(''); setEndDate(''); }}
+              style={{ background: 'transparent', border: 'none', color: '#ef4444', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}
+            >
+              Reset Calendar
+            </button>
+          )}
+        </div>
       </header>
 
       <div className={styles.tableWrapper}>
         <table className={styles.table}>
           <thead>
             <tr>
-              <th>Verified Member</th>
-              <th>Presence & Credential</th>
+              <th onClick={() => toggleSort('name')} style={{ cursor: 'pointer' }}>
+                Verified Member {sortField === 'name' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
+              </th>
+              <th onClick={() => toggleSort('role')} style={{ cursor: 'pointer' }}>
+                Presence & Role {sortField === 'role' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
+              </th>
+              <th onClick={() => toggleSort('createdAt')} style={{ cursor: 'pointer' }}>
+                Joined On {sortField === 'createdAt' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
+              </th>
               <th>Clearance</th>
               <th>Executive Actions</th>
             </tr>
@@ -115,6 +203,10 @@ export default function UserApprovalList({ initialUsers }: { initialUsers: any[]
                 <td>
                   <div className={styles.userEmail}>{user.email}</div>
                   <div className={styles.roleBadge}>{user.role}</div>
+                </td>
+                <td>
+                  <div className={styles.userDate}>{new Date(user.createdAt).toLocaleDateString()}</div>
+                  <div style={{ fontSize: '0.65rem', opacity: 0.6 }}>{new Date(user.createdAt).toLocaleTimeString()}</div>
                 </td>
                 <td>
                   <span className={user.status === 'APPROVED' ? styles.statusApproved : styles.statusPending}>

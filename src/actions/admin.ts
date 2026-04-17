@@ -77,13 +77,19 @@ export async function addVerifiedEmail(data: { name: string, email: string, star
     const session = await verifySession();
     if (!session || session.role !== 'ADMIN') return { error: 'Unauthorized' };
 
+    // Enforce 5-digit auth code if provided
+    let finalAuthCode = data.authCode || null;
+    if (finalAuthCode && finalAuthCode.length !== 5) {
+      return { error: 'Auth code must be exactly 5 digits' };
+    }
+
     await prisma.verifiedEmail.create({
       data: {
         name: data.name,
         email: data.email,
         startYear: data.startYear,
         gradYear: data.gradYear,
-        authCode: data.authCode || null,
+        authCode: finalAuthCode,
         role: data.role || 'ALUMNI'
       }
     });
@@ -174,6 +180,12 @@ export async function uploadVerifiedEmails(formData: FormData) {
     for (const row of rows) {
       if (!row.trim()) continue;
       const [name, email, startYear, gradYear, authCode, role] = row.split(',').map(s => s?.trim());
+      
+      let finalAuthCode = authCode || null;
+      if (finalAuthCode && finalAuthCode.length !== 5) {
+        finalAuthCode = finalAuthCode.slice(0, 5); // Fallback: truncate to 5 digits
+      }
+
       if (email && name) {
         await prisma.verifiedEmail.upsert({
           where: { email },
@@ -181,7 +193,7 @@ export async function uploadVerifiedEmails(formData: FormData) {
             name, 
             startYear: parseInt(startYear) || null, 
             gradYear: parseInt(gradYear) || null,
-            authCode: authCode || null,
+            authCode: finalAuthCode,
             role: (role?.toUpperCase() === 'STAFF' ? 'STAFF' : 'ALUMNI')
           },
           create: { 
@@ -189,7 +201,7 @@ export async function uploadVerifiedEmails(formData: FormData) {
             email, 
             startYear: parseInt(startYear) || null, 
             gradYear: parseInt(gradYear) || null,
-            authCode: authCode || null,
+            authCode: finalAuthCode,
             role: (role?.toUpperCase() === 'STAFF' ? 'STAFF' : 'ALUMNI')
           }
         });
@@ -202,5 +214,119 @@ export async function uploadVerifiedEmails(formData: FormData) {
   } catch (err) {
     console.error('Upload error:', err);
     return { error: 'Failed to upload CSV.' };
+  }
+}
+
+export async function getPotentialDuplicates() {
+  try {
+    const session = await verifySession();
+    if (!session || session.role !== 'ADMIN') return [];
+
+    const users = await prisma.user.findMany({
+      select: { id: true, name: true, email: true, status: true, role: true, createdAt: true }
+    });
+
+    const nameMap = new Map<string, any[]>();
+    users.forEach(u => {
+      const existing = nameMap.get(u.name) || [];
+      nameMap.set(u.name, [...existing, u]);
+    });
+
+    const duplicates = Array.from(nameMap.entries())
+      .filter(([name, list]) => list.length > 1)
+      .map(([name, list]) => ({ name, users: list }));
+
+    return duplicates;
+  } catch (err) {
+    return [];
+  }
+}
+
+export async function resolveDuplicate(userIdToDelete: string) {
+  try {
+    const session = await verifySession();
+    if (!session || session.role !== 'ADMIN') return { error: 'Unauthorized' };
+
+    await prisma.user.delete({
+      where: { id: userIdToDelete }
+    });
+
+    revalidatePath('/admin');
+    return { success: true, message: 'Duplicate profile purged from KecNetwork.in database.' };
+  } catch (err) {
+    return { error: 'Failed to resolve duplicate.' };
+  }
+}
+
+export async function adminEditPost(postId: string, newContent: string) {
+  try {
+    const session = await verifySession();
+    if (!session || session.role !== 'ADMIN') return { error: 'Unauthorized' };
+
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { content: true, authorId: true }
+    });
+
+    if (!post) return { error: 'Post not found.' };
+
+    await prisma.post.update({
+      where: { id: postId },
+      data: { 
+        content: newContent,
+        adminEdited: true
+      }
+    });
+
+    // Notify the author
+    await prisma.notification.create({
+      data: {
+        userId: post.authorId,
+        message: `KecNetwork.in Admin Action: Your post content has been refined for institutional clarity. You have the right to appeal.`,
+        type: 'EDIT',
+        targetId: postId
+      }
+    });
+
+    revalidatePath('/feed');
+    revalidatePath('/dashboard');
+    return { success: true, message: 'Institutional content refined.' };
+  } catch (err) {
+    return { error: 'Refinement failed.' };
+  }
+}
+
+export async function getUserNotifications() {
+  try {
+    const session = await verifySession();
+    if (!session?.userId) return [];
+
+    return await prisma.notification.findMany({
+      where: { userId: session.userId },
+      orderBy: { createdAt: 'desc' },
+      take: 20
+    });
+  } catch (err) {
+    return [];
+  }
+}
+
+export async function submitAppeal(postId: string, reason: string) {
+  try {
+    const session = await verifySession();
+    if (!session?.userId) return { error: 'Unauthorized' };
+
+    await prisma.appeal.create({
+      data: {
+        userId: session.userId,
+        postId,
+        reason,
+        status: 'PENDING'
+      }
+    });
+
+    return { success: true, message: 'Appeal submitted for institutional review.' };
+  } catch (err) {
+    return { error: 'Appeal failed.' };
   }
 }

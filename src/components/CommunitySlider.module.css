@@ -1,11 +1,17 @@
 .sliderContainer {
-  background: var(--card-bg);
+  background: linear-gradient(145deg, var(--card-bg) 0%, rgba(123, 97, 255, 0.03) 100%);
   border: 1px solid var(--card-border);
   border-radius: 20px;
   overflow: hidden;
   position: relative;
   margin-bottom: 2rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sliderContainer:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 40px rgba(123, 97, 255, 0.15);
 }
 
 .sliderTrack {
@@ -37,19 +43,23 @@
 }
 
 .postContent {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   line-height: 1.6;
   color: var(--text-primary);
   font-weight: 500;
   position: relative;
   z-index: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .postMedia {
-  margin-top: 1.5rem;
+  margin-top: 1rem;
   border-radius: 12px;
   overflow: hidden;
-  max-height: 300px;
+  max-height: 140px;
   border: 1px solid var(--card-border);
 }
 

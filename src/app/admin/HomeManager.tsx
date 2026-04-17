@@ -100,13 +100,13 @@ export default function HomeManager({ initialBanners, initialCompanies, profileC
         <section className={styles.section}>
           <div className={styles.infoBox}>
             <strong>📸 Sidebar Gallery Slideshow</strong>
-            <p>These images appear as an auto-rotating slideshow in the <strong>right sidebar</strong> of the Home page. You can upload up to <strong>10 images</strong>. Currently: <strong>{initialBanners.length} / 10</strong> slides.</p>
+            <p>These images appear as an auto-rotating slideshow in the <strong>right sidebar</strong> of the Home page. You can upload up to <strong>20 images</strong>. Currently: <strong>{initialBanners.length} / 20</strong> slides.</p>
           </div>
           <h3>Add Gallery Slide</h3>
-          {initialBanners.length >= 10 ? (
+          {initialBanners.length >= 20 ? (
             <div className={styles.infoBox} style={{ borderColor: '#ef4444' }}>
               <strong style={{ color: '#ef4444' }}>Maximum Reached</strong>
-              <p>You have reached the 10-slide limit. Delete an existing slide to add a new one.</p>
+              <p>You have reached the 20-slide limit. Delete an existing slide to add a new one.</p>
             </div>
           ) : (
             <form onSubmit={handleAddBanner} className={styles.form}>

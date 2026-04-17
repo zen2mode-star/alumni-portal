@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import CSVUploader from './CSVUploader';
 import VerifiedEmailList from './VerifiedEmailList';
 import UserApprovalList from './UserApprovalList';
+import DuplicateReviewList from './DuplicateReviewList';
 import OutreachCenter from './OutreachCenter';
 import JobApprovalPanel from './JobApprovalPanel';
 import UpdateApprovalPanel from './UpdateApprovalPanel';
@@ -13,7 +14,7 @@ import NoticeManager from './NoticeManager';
 import AdminJobPost from './AdminJobPost';
 import CollapsibleList from './CollapsibleList';
 import SiteSettings from '@/components/SiteSettings';
-import { getAlumniCompanies, getOpenRegistrationStatus, getPendingLegacyPhotos } from '@/actions/admin';
+import { getAlumniCompanies, getOpenRegistrationStatus, getPendingLegacyPhotos, getPotentialDuplicates } from '@/actions/admin';
 import styles from './page.module.css';
 
 const prisma = new PrismaClient();
@@ -23,7 +24,7 @@ export default async function AdminDashboard() {
   
   if (session?.role !== 'ADMIN') redirect('/');
 
-  const [users, verifiedEmails, verifiedCount, pendingJobs, pendingPosts, banners, companies, notices, alumniCompanies, openStatus, pendingPhotos] = await Promise.all([
+  const [users, verifiedEmails, verifiedCount, pendingJobs, pendingPosts, banners, companies, notices, alumniCompanies, openStatus, pendingPhotos, duplicates] = await Promise.all([
     prisma.user.findMany({ orderBy: { createdAt: 'desc' } }),
     prisma.verifiedEmail.findMany({ orderBy: { createdAt: 'desc' } }),
     prisma.verifiedEmail.count(),
@@ -42,7 +43,8 @@ export default async function AdminDashboard() {
     prisma.notice.findMany({ orderBy: { createdAt: 'desc' } }).catch(() => []),
     getAlumniCompanies(),
     getOpenRegistrationStatus(),
-    getPendingLegacyPhotos()
+    getPendingLegacyPhotos(),
+    getPotentialDuplicates()
   ]);
 
   const registeredEmails = new Set(users.map(u => u.email));
@@ -53,7 +55,7 @@ export default async function AdminDashboard() {
       <header className={styles.dashboardHeader}>
         <div className={styles.headerTitle}>
           <h1>Admin Control Center</h1>
-          <p>KecAlumni.in • Campus Oversight</p>
+          <p>KecNetwork.in • Campus Oversight</p>
         </div>
         <div className={styles.statsRow}>
           <div className={styles.statCard}>
@@ -109,6 +111,21 @@ export default async function AdminDashboard() {
             <CollapsibleList title="Registered Member Directory" count={users.length}>
               <UserApprovalList initialUsers={users} />
             </CollapsibleList>
+          </section>
+
+          <section className={styles.section} style={{ marginTop: '1.5rem' }}>
+            <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              Duplicate Account Audit
+              {duplicates.length > 0 && (
+                <span style={{
+                  background: '#f59e0b', color: 'white', borderRadius: '20px',
+                  fontSize: '0.7rem', padding: '0.15rem 0.6rem', fontWeight: 700
+                }}>
+                  {duplicates.length} clusters
+                </span>
+              )}
+            </h2>
+            <DuplicateReviewList duplicates={duplicates} />
           </section>
 
           {/* Job Approval Section */}

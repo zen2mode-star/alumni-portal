@@ -61,3 +61,84 @@
   transition: all 0.2s;
 }
 .messageLink:hover { background: var(--primary-color); color: white; }
+
+.editedBadge { 
+  font-size: 0.62rem; 
+  background: rgba(34, 197, 94, 0.1); 
+  color: #22c55e; 
+  padding: 0.2rem 0.5rem; 
+  border-radius: 6px; 
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.actionRow { display: flex; gap: 0.5rem; align-items: center; }
+
+.editBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  color: var(--text-secondary);
+  padding: 0.4rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.editBtn:hover { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+
+.editWrapper { width: 100%; display: flex; flex-direction: column; gap: 1rem; }
+.editArea {
+  width: 100%;
+  min-height: 120px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1rem;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  outline: none;
+  resize: vertical;
+}
+.editArea:focus { border-color: var(--primary-color); }
+
+.editActions { display: flex; gap: 0.75rem; }
+.saveBtn {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.cancelBtn {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--card-border);
+  padding: 0.6rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.appealBtn {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s;
+}
+.appealBtn:hover { background: #f59e0b; color: white; }

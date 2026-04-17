@@ -15,22 +15,42 @@ export async function sendMessage(formData: FormData) {
     const receiverId = formData.get('receiverId') as string;
     const content = formData.get('content') as string;
     const image = formData.get('image') as File | null;
+    const audio = formData.get('audio') as File | null;
+
+    // 1. Security Check: Is sender blocked globally?
+    const user = await prisma.user.findUnique({
+      where: { id: session.userId },
+      select: { isBlocked: true }
+    });
+    if (user?.isBlocked) return { error: 'Your account has been restricted globally on KecNetwork.in due to community violations.' };
+
+    // 2. Security Check: Is sender blocked by receiver?
+    const isBlockedByReceiver = await prisma.block.findUnique({
+      where: { blockerId_blockedId: { blockerId: receiverId, blockedId: session.userId } }
+    });
+    if (isBlockedByReceiver) return { error: 'Conversation locked by the recipient.' };
 
     let imageUrl = null;
+    let audioUrl = null;
+    let type = 'TEXT';
+
     if (image && image.size > 0) {
-      try {
-        imageUrl = await uploadImage(image, 'messages');
-      } catch (e) {
-        throw new Error('Failed to upload message attachment.');
-      }
+      imageUrl = await uploadImage(image, 'messages');
+      type = 'IMAGE';
+    }
+    if (audio && audio.size > 0) {
+      audioUrl = await uploadImage(audio, 'voice_notes');
+      type = 'AUDIO';
     }
 
-    if (!content && !imageUrl) throw new Error('Empty message');
+    if (!content && !imageUrl && !audioUrl) throw new Error('Empty message');
 
     await prisma.message.create({
       data: {
-        content: encryptMessage(content || ''),
+        content: content ? encryptMessage(content) : null,
         imageUrl,
+        audioUrl,
+        type,
         senderId: session.userId,
         receiverId,
         read: false
@@ -42,6 +62,27 @@ export async function sendMessage(formData: FormData) {
   } catch (error) {
     console.error('Send Error:', error);
     return { error: 'Failed to send message.' };
+  }
+}
+
+export async function toggleBlockUser(targetId: string) {
+  try {
+    const session = await verifySession();
+    if (!session?.userId) return { error: 'Unauthorized' };
+
+    const existing = await prisma.block.findUnique({
+      where: { blockerId_blockedId: { blockerId: session.userId, blockedId: targetId } }
+    });
+
+    if (existing) {
+      await prisma.block.delete({ where: { id: existing.id } });
+      return { success: true, message: 'User unblocked.' };
+    } else {
+      await prisma.block.create({ data: { blockerId: session.userId, blockedId: targetId } });
+      return { success: true, message: 'User blocked.' };
+    }
+  } catch {
+    return { error: 'Blocking failed.' };
   }
 }
 

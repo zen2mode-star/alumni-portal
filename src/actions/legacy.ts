@@ -47,6 +47,7 @@ export async function getLegacyPhotos(year?: number) {
         status: 'APPROVED',
         ...(year ? { year } : {})
       },
+      include: { author: { select: { name: true } } },
       orderBy: { createdAt: 'desc' }
     });
   } catch (err) {

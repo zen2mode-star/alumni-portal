@@ -9,8 +9,8 @@ import "./globals.css";
 const prisma = new PrismaClient();
 
 export const metadata = {
-  title: "KecAlumni.in - Official Alumni Network",
-  description: "Connect with the official alumni network of BTKIT (KEC) Dwarahat — KecAlumni.in. Bridging generations of excellence since 1991.",
+  title: "KecNetwork.in - Official KEC Community",
+  description: "Connect with the official KEC Network of BTKIT (KEC) Dwarahat — KecNetwork.in.",
 };
 
 export default async function RootLayout({

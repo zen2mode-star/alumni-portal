@@ -16,11 +16,20 @@ interface User {
 export default function MessageSidebar({ users, activeUserId }: { users: User[], activeUserId?: string }) {
   const [search, setSearch] = useState('');
   const [tab, setTab] = useState<'ALUMNI' | 'STUDENT' | 'STAFF'>('ALUMNI');
+  const [mode, setMode] = useState<'RECENTS' | 'COMMUNITY'>('RECENTS');
 
-  const filtered = users.filter(u =>
+  const recentContacts = users.filter(u => u.lastMessageAt && u.lastMessageAt.getTime() > 0);
+  
+  const filteredRecents = recentContacts.filter(u => 
+    u.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const filteredCommunity = users.filter(u =>
     u.role === tab &&
     u.name.toLowerCase().includes(search.toLowerCase())
   );
+
+  const displayUsers = mode === 'RECENTS' ? filteredRecents : filteredCommunity;
 
   const alumniCount = users.filter(u => u.role === 'ALUMNI').length;
   const studentCount = users.filter(u => u.role === 'STUDENT').length;
@@ -33,78 +42,103 @@ export default function MessageSidebar({ users, activeUserId }: { users: User[],
     }}>
       {/* Sidebar Header */}
       <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid var(--card-border)', flexShrink: 0 }}>
-        <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-          <Lock size={10} /> Encrypted Contacts
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+          <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+            <Lock size={10} /> Secured Network
+          </div>
+          <div style={{ display: 'flex', background: 'var(--bg-elevated)', padding: '2px', borderRadius: '8px', border: '1px solid var(--card-border)' }}>
+             <button 
+               onClick={() => setMode('RECENTS')}
+               style={{ 
+                 padding: '0.3rem 0.6rem', fontSize: '0.65rem', borderRadius: '6px', border: 'none', cursor: 'pointer',
+                 background: mode === 'RECENTS' ? 'var(--primary-color)' : 'transparent',
+                 color: mode === 'RECENTS' ? 'white' : 'var(--text-secondary)',
+                 fontWeight: 700, transition: '0.2s'
+               }}
+             >Recents</button>
+             <button 
+               onClick={() => setMode('COMMUNITY')}
+               style={{ 
+                 padding: '0.3rem 0.6rem', fontSize: '0.65rem', borderRadius: '6px', border: 'none', cursor: 'pointer',
+                 background: mode === 'COMMUNITY' ? 'var(--primary-color)' : 'transparent',
+                 color: mode === 'COMMUNITY' ? 'white' : 'var(--text-secondary)',
+                 fontWeight: 700, transition: '0.2s'
+               }}
+             >Directory</button>
+          </div>
         </div>
 
-        {/* Tab Toggle */}
-        <div style={{ display: 'flex', gap: '0.3rem', marginBottom: '0.75rem' }}>
-          <button
-            onClick={() => setTab('ALUMNI')}
-            style={{
-              flex: 1, padding: '0.5rem 0.15rem', borderRadius: '8px',
-              border: tab === 'ALUMNI' ? '1px solid var(--primary-color)' : '1px solid var(--card-border)',
-              background: tab === 'ALUMNI' ? 'rgba(123,97,255,0.15)' : 'transparent',
-              color: tab === 'ALUMNI' ? 'var(--primary-color)' : 'var(--text-secondary)',
-              fontWeight: 700, fontSize: '0.7rem', cursor: 'pointer',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.1rem',
-              transition: 'all 0.15s',
-            }}
-          >
-            <Users size={12} /> <span>Alumni</span>
-            <span style={{
-              background: tab === 'ALUMNI' ? 'var(--primary-color)' : 'var(--card-border)',
-              color: 'white', borderRadius: '10px', padding: '0 0.4rem', fontSize: '0.6rem'
-            }}>{alumniCount}</span>
-          </button>
-          
-          <button
-            onClick={() => setTab('STAFF')}
-            style={{
-              flex: 1, padding: '0.5rem 0.15rem', borderRadius: '8px',
-              border: tab === 'STAFF' ? '1px solid #f59e0b' : '1px solid var(--card-border)',
-              background: tab === 'STAFF' ? 'rgba(245,158,11,0.12)' : 'transparent',
-              color: tab === 'STAFF' ? '#f59e0b' : 'var(--text-secondary)',
-              fontWeight: 700, fontSize: '0.7rem', cursor: 'pointer',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.1rem',
-              transition: 'all 0.15s',
-            }}
-          >
-            <Shield size={12} /> <span>Staff</span>
-            <span style={{
-              background: tab === 'STAFF' ? '#f59e0b' : 'var(--card-border)',
-              color: 'white', borderRadius: '10px', padding: '0 0.4rem', fontSize: '0.6rem'
-            }}>{staffCount}</span>
-          </button>
+        {mode === 'COMMUNITY' ? (
+          <div style={{ display: 'flex', gap: '0.3rem', marginBottom: '0.75rem' }}>
+            <button
+              onClick={() => setTab('ALUMNI')}
+              style={{
+                flex: 1, padding: '0.5rem 0.15rem', borderRadius: '8px',
+                border: tab === 'ALUMNI' ? '1px solid var(--primary-color)' : '1px solid var(--card-border)',
+                background: tab === 'ALUMNI' ? 'rgba(123,97,255,0.15)' : 'transparent',
+                color: tab === 'ALUMNI' ? 'var(--primary-color)' : 'var(--text-secondary)',
+                fontWeight: 700, fontSize: '0.7rem', cursor: 'pointer',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.1rem',
+                transition: 'all 0.15s',
+              }}
+            >
+              <Users size={12} /> <span>Alumni</span>
+              <span style={{
+                background: tab === 'ALUMNI' ? 'var(--primary-color)' : 'var(--card-border)',
+                color: 'white', borderRadius: '10px', padding: '0 0.4rem', fontSize: '0.6rem'
+              }}>{alumniCount}</span>
+            </button>
+            
+            <button
+              onClick={() => setTab('STAFF')}
+              style={{
+                flex: 1, padding: '0.5rem 0.15rem', borderRadius: '8px',
+                border: tab === 'STAFF' ? '1px solid #f59e0b' : '1px solid var(--card-border)',
+                background: tab === 'STAFF' ? 'rgba(245,158,11,0.12)' : 'transparent',
+                color: tab === 'STAFF' ? '#f59e0b' : 'var(--text-secondary)',
+                fontWeight: 700, fontSize: '0.7rem', cursor: 'pointer',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.1rem',
+                transition: 'all 0.15s',
+              }}
+            >
+              <Shield size={12} /> <span>Staff</span>
+              <span style={{
+                background: tab === 'STAFF' ? '#f59e0b' : 'var(--card-border)',
+                color: 'white', borderRadius: '10px', padding: '0 0.4rem', fontSize: '0.6rem'
+              }}>{staffCount}</span>
+            </button>
 
-          <button
-            onClick={() => setTab('STUDENT')}
-            style={{
-              flex: 1, padding: '0.5rem 0.15rem', borderRadius: '8px',
-              border: tab === 'STUDENT' ? '1px solid #22c55e' : '1px solid var(--card-border)',
-              background: tab === 'STUDENT' ? 'rgba(34,197,94,0.12)' : 'transparent',
-              color: tab === 'STUDENT' ? '#22c55e' : 'var(--text-secondary)',
-              fontWeight: 700, fontSize: '0.7rem', cursor: 'pointer',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.1rem',
-              transition: 'all 0.15s',
-            }}
-          >
-            <GraduationCap size={12} /> <span>Student</span>
-            <span style={{
-              background: tab === 'STUDENT' ? '#22c55e' : 'var(--card-border)',
-              color: 'white', borderRadius: '10px', padding: '0 0.4rem', fontSize: '0.6rem'
-            }}>{studentCount}</span>
-          </button>
-        </div>
+            <button
+              onClick={() => setTab('STUDENT')}
+              style={{
+                flex: 1, padding: '0.5rem 0.15rem', borderRadius: '8px',
+                border: tab === 'STUDENT' ? '1px solid #22c55e' : '1px solid var(--card-border)',
+                background: tab === 'STUDENT' ? 'rgba(34,197,94,0.12)' : 'transparent',
+                color: tab === 'STUDENT' ? '#22c55e' : 'var(--text-secondary)',
+                fontWeight: 700, fontSize: '0.7rem', cursor: 'pointer',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.1rem',
+                transition: 'all 0.15s',
+              }}
+            >
+              <GraduationCap size={12} /> <span>Student</span>
+              <span style={{
+                background: tab === 'STUDENT' ? '#22c55e' : 'var(--card-border)',
+                color: 'white', borderRadius: '10px', padding: '0 0.4rem', fontSize: '0.6rem'
+              }}>{studentCount}</span>
+            </button>
+          </div>
+        ) : (
+          <div style={{ height: '0.5rem' }}></div>
+        )}
 
         {/* Search */}
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative', marginBottom: mode === 'RECENTS' ? '0.5rem' : '0' }}>
           <Search size={13} style={{ position: 'absolute', left: '0.7rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
           <input
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder={`Search ${tab === 'ALUMNI' ? 'alumni' : tab === 'STAFF' ? 'staff' : 'students'}...`}
+            placeholder={mode === 'RECENTS' ? "Search conversations..." : `Search ${tab.toLowerCase()}...`}
             style={{
               width: '100%', padding: '0.6rem 0.75rem 0.6rem 2rem',
               background: 'var(--bg-elevated)', border: '1px solid var(--card-border)',
@@ -117,12 +151,12 @@ export default function MessageSidebar({ users, activeUserId }: { users: User[],
 
       {/* Contacts List */}
       <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
-        {filtered.length === 0 && (
+        {displayUsers.length === 0 && (
           <p style={{ padding: '1.5rem', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.82rem' }}>
-            No {tab === 'ALUMNI' ? 'alumni' : tab === 'STAFF' ? 'staff' : 'students'} found.
+            No {mode === 'RECENTS' ? 'recent conversations' : (tab === 'ALUMNI' ? 'alumni' : tab === 'STAFF' ? 'staff' : 'students')} found.
           </p>
         )}
-        {filtered.map(u => {
+        {displayUsers.map(u => {
           const isActive = activeUserId === u.id;
           const avatarBg = u.role === 'ALUMNI' ? '7B61FF' : u.role === 'STAFF' ? 'f59e0b' : '22c55e';
           const avatarUrl = u.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=${avatarBg}&color=fff&bold=true`;

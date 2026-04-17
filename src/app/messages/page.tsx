@@ -27,7 +27,7 @@ export default async function MessagesPage({ searchParams }: { searchParams: Pro
   const messages = await prisma.message.findMany({
     where: { OR: [{ senderId: session.userId }, { receiverId: session.userId }] },
     orderBy: { createdAt: 'desc' },
-    select: { id: true, content: true, createdAt: true, senderId: true, receiverId: true, read: true }
+    select: { id: true, content: true, createdAt: true, senderId: true, receiverId: true, read: true, type: true }
   });
 
   // Build per-contact preview map
@@ -36,7 +36,7 @@ export default async function MessagesPage({ searchParams }: { searchParams: Pro
     const contactId = msg.senderId === session.userId ? msg.receiverId : msg.senderId;
     if (!messageMap.has(contactId)) {
       messageMap.set(contactId, {
-        lastMessage: decryptMessage(msg.content),
+        lastMessage: msg.content ? decryptMessage(msg.content) : (msg.type === 'AUDIO' ? '🎤 Voice Message' : 'Image attachment'),
         lastMessageAt: msg.createdAt,
         unread: !msg.read && msg.receiverId === session.userId
       });
@@ -61,7 +61,7 @@ export default async function MessagesPage({ searchParams }: { searchParams: Pro
       },
       orderBy: { createdAt: 'asc' }
     });
-    conversation = rawConv.map(msg => ({ ...msg, content: decryptMessage(msg.content) }));
+    conversation = rawConv.map(msg => ({ ...msg, content: msg.content ? decryptMessage(msg.content) : null }));
   }
 
   const activeUser = users.find(u => u.id === activeUserId);

@@ -7,7 +7,7 @@ interface Props {
 
 export default function AlumniCard({ alumni }: Props) {
   return (
-    <div className={`${styles.card} animate-pop`}>
+    <div className={`${styles.card} card-entrance`}>
       <div className={styles.visuals}>
         <img src={alumni.imageUrl} alt={alumni.name} className={styles.avatar} />
         <div className={styles.batchPill}>{alumni.gradYear}</div>
@@ -16,6 +16,9 @@ export default function AlumniCard({ alumni }: Props) {
       <div className={styles.info}>
         <div className={styles.header}>
           <div className={styles.primaryInfo}>
+            {alumni.designation && (
+              <div className={styles.designationBadge}>{alumni.designation}</div>
+            )}
             <h4 className={styles.name}>{alumni.name}</h4>
             <span className={styles.dept}>{alumni.department}</span>
           </div>

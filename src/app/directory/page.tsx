@@ -7,15 +7,17 @@ import StaffVoices from '@/components/StaffVoices';
 const prisma = new PrismaClient();
 
 export default async function DirectoryPage() {
-  const alumni = await prisma.user.findMany({
+  const members = await prisma.user.findMany({
     where: { 
-      role: 'ALUMNI',
       status: 'APPROVED'
     },
     select: {
       id: true,
       name: true,
+      role: true,
+      designation: true,
       gradYear: true,
+      startYear: true,
       branch: true,
       company: true,
       jobRole: true,
@@ -33,16 +35,18 @@ export default async function DirectoryPage() {
     take: 3
   });
 
-  const formattedAlumni = alumni.map(a => ({
-    id: a.id,
-    name: a.name,
-    gradYear: a.gradYear || 2020,
-    department: a.branch || 'Unknown',
-    company: a.company || 'Searching...',
-    role: a.jobRole || 'Professional',
-    skills: a.skills ? a.skills.split(',') : [],
-    imageUrl: a.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(a.name)}&background=7B61FF&color=fff`,
-    bio: a.bio || 'Verified Alumni Member',
+  const formattedMembers = members.map(m => ({
+    id: m.id,
+    name: m.name,
+    role: m.role,
+    designation: m.designation,
+    gradYear: m.gradYear || (m.startYear ? m.startYear + 4 : 2024),
+    department: m.branch || 'KEC Community',
+    company: m.role === 'STUDENT' ? 'BTKIT Dwarahat' : (m.company || 'Searching...'),
+    jobTitle: m.jobRole || (m.role === 'STUDENT' ? 'Emerging Talent' : 'Professional'),
+    skills: m.skills ? m.skills.split(',') : [],
+    imageUrl: m.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=7B61FF&color=fff`,
+    bio: m.bio || `Verified ${m.role} Member`,
   }));
 
   return (
@@ -50,7 +54,9 @@ export default async function DirectoryPage() {
       <StaffVoices messages={staffMessages} />
       <Suspense fallback={<div>Loading Directory...</div>}>
         <DirectoryClient 
-          initialData={formattedAlumni} 
+          initialData={formattedMembers} 
+          title="KEC Network Directory" 
+          subtitle="Integrated community access for Alumni, Staff, Faculty, and Leadership"
           iconType="alumni"
         />
       </Suspense>
